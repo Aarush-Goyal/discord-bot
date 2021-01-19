@@ -1,9 +1,9 @@
 import discord
 import requests
+import os 
+from utils import take_input_dm
 
-from utils import take_input_dm, not_recognized
-
-BASE_URL = 'http://localhost:3000/api/v1/contents'
+BASE_URL = os.environ['BASE_URL'] + '/api/v1/contents'
 
 
 def extract_content(sample):
@@ -28,7 +28,6 @@ def extract_content(sample):
 
 
 def embed_content(embed, content):
-
     embed.clear_fields()
 
     for i in range(len(content)):
@@ -147,14 +146,18 @@ async def fetch(user, command):
     return True
 
 
-async def mark_done(user,command):
+async def mark_ques_status(user, command, status):
   unique_id=command.content.split(' ')[1]
-  status = 1
   res = await update_submissions(user,unique_id,status)
-  
+ 
+  if status == 1:
+    desc = "Marked done"
+  elif status == 0 or status == 2:
+    desc = "Marked undone"
+
   embed = discord.Embed(
   title='Resource',
-  description='Marked done',
+  description= desc,
   )
   
   if not res.status_code == 200:
@@ -167,62 +170,11 @@ async def mark_done(user,command):
           return False
       
       await prompt_and_check(user,embed,content,False)
-
-
-async def mark_undone(user,command):
-  unique_id=command.content.split(' ')[1]
-  status = 0
-  res = await update_submissions(user,unique_id,status)
-
-
-  embed = discord.Embed(
-    title='Resource',
-    description='Marked undone',
-  )
-  
-  if not res.status_code == 200:
-      return False
-
-  else:
-      content=extract_content(res)
-      
-      if not content:
-          return False
-      
-      await prompt_and_check(user,embed,content,False)
-
-
-
-async def mark_doubt(user,command):
-  unique_id=command.content.split(' ')[1]
-  status = 2
-  res = await update_submissions(user,unique_id,status)
-
-
-  embed = discord.Embed(
-    title='Resource',
-    description='Marked undone',
-  )
-  print(unique_id)
-  
-  res={}  #get response
-  
-  if not res.status_code == 200:
-      return False
-
-  else:
-      content=extract_content(res)
-      
-      if not content:
-          return False
-      
-      await prompt_and_check(user,embed,content,False)
-
 
 
 async def update_submissions(user,unique_id,status):
   id = user.id
-  url = 'http://127.0.0.1:3000/api/v1/submissions'
+  url = os.environ['BASE_URL'] + '/api/v1/submissions'
   headers = {
       'Content-Type': 'application/vnd.api+json'
   }

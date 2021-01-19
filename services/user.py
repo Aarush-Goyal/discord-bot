@@ -1,9 +1,24 @@
 import discord
 import re
+import os
 import asyncio
 import requests
 
 from client import client
+
+# Send greeting msg to new user and post user details in DB
+async def new_member_joined(member, GREETING_CHANNEL):
+  ch = client.get_channel(GREETING_CHANNEL)
+
+  new_user_message = "New member " + member.name + " has joined the channel."
+  await ch.send(new_user_message)
+
+  user_email = await get_user_email_and_id(member)
+  if user_email:
+    resp = await submit_user_details(user_email,member)
+  
+  return resp
+
 
 
 async def get_user_email_and_id(user):
@@ -38,22 +53,26 @@ async def get_user_email_and_id(user):
     return email
 
 
-async def submit_details(user_email,user):
-    # TODO Error Handling on status!=200
-    url = 'https://jsonplaceholder.typicode.com/signup'
+# Post user details in database
+async def submit_user_details(user_email, member):
+
+    url = os.environ['BASE_URL'] + '/api/v1/users'
+    headers = {
+        'Content-Type': 'application/vnd.api+json'
+    }
     myobj = {
         "data": {
           "attributes":{
-            "email": user_email.content,
-            "name": "discord"+user.name,
-            "discord_id": str(user.id),
-            "username":user.name,
-            "password": "Prachi@1777",
+            "email": str(member.id)+ "@gmail.com",
+            "name": "discord"+member.name,
+            "discord_id": str(member.id),
+            "username": member.name,
+            "password": "1234",
             "buddy":0
           },
           "type":"users"
         }
     }
-    print(myobj)
-    x = requests.post(url, json=myobj)
-    print(x)
+
+    resp = requests.request("POST", url, headers=headers, json=myobj)
+    resp = resp.json()
