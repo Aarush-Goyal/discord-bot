@@ -2,8 +2,11 @@ import discord
 import requests
 import os 
 from utils import take_input_dm
+from dotenv import load_dotenv
 
-BASE_URL = os.environ['BASE_URL'] + '/api/v1/contents'
+
+load_dotenv()
+BASE_URL = os.getenv('BASE_URL') + '/api/v1/contents'
 
 
 def extract_content(sample):
@@ -174,7 +177,7 @@ async def mark_ques_status(user, command, status):
 
 async def update_submissions(user,unique_id,status):
   id = user.id
-  url = os.environ['BASE_URL'] + '/api/v1/submissions'
+  url = os.getenv('BASE_URL') + '/api/v1/submissions'
   headers = {
       'Content-Type': 'application/vnd.api+json'
   }

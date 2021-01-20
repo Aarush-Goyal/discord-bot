@@ -6,7 +6,10 @@ import constants
 from client import client
 from discord.ext import tasks
 from utils import get_seconds_till_weekday
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 class GroupMeet:
     def __init__(self, client, channel_id):
@@ -134,7 +137,7 @@ class GroupMeet:
         await self.client.get_channel(int(self.channel_id)).send(embed=prompt)
 
 
-gm = GroupMeet(client=client, channel_id=int(os.environ['GROUPMEET_CHANNEL']))
+gm = GroupMeet(client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 
 
 # GM_POLL
@@ -160,7 +163,7 @@ async def called_once_a_week_gm_assign():
         await gm.add_users_to_db()
         await gm.post_groups_to_channel()
     gm = GroupMeet(
-        client=client, channel_id=int(os.environ['GROUPMEET_CHANNEL']))
+        client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 
 
 @called_once_a_week_gm_assign.before_loop

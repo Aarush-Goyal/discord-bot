@@ -5,7 +5,10 @@ import constants
 from discord.ext import tasks
 from client import client
 from utils import get_seconds_till_weekday
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 async def get_from_user(member, ques):
   prompt = discord.Embed(
@@ -41,7 +44,7 @@ async def get_user_gbu(message_channel, member):
 
 @tasks.loop(hours=168.0)  # 168 hours in a week
 async def called_once_a_week_gbu():
-    message_channel = client.get_channel(int(os.environ['GBU_CHANNEL']))
+    message_channel = client.get_channel(int(os.getenv('GBU_CHANNEL')))
     print(f"Got channel {message_channel}")
     tasks = []
 

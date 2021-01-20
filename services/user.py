@@ -3,8 +3,9 @@ import re
 import os
 import asyncio
 import requests
-
 from client import client
+from dotenv import load_dotenv
+load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
 async def new_member_joined(member, GREETING_CHANNEL):
@@ -56,7 +57,7 @@ async def get_user_email_and_id(user):
 # Post user details in database
 async def submit_user_details(user_email, member):
 
-    url = os.environ['BASE_URL'] + '/api/v1/users'
+    url = os.getenv('BASE_URL') + '/api/v1/users'
     headers = {
         'Content-Type': 'application/vnd.api+json'
     }
