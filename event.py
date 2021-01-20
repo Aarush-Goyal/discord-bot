@@ -2,6 +2,7 @@ from utils import not_recognized
 from services.user import get_user_email_and_id, submit_user_details
 from services.content import fetch, mark_ques_status
 from services.mmt import assign_mentors_to_all
+from services.report import get_report_from_db, show_user_report, calc_days
 import discord
 import os
 from dotenv import load_dotenv
@@ -15,13 +16,6 @@ def get_prompt_help():
           title='DN Bot Guide', description= "Use these commands for smooth experience on the platform \n"
         ).set_thumbnail(
             url = 'https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png'
-        )
-
-def get_prompt_report():
-    return discord.Embed(
-          title='DN User Report'
-        ).set_thumbnail(
-            url = 'https://images.discordapp.net/avatars/535595120175611915/004416b242f631c5052ed81c3ddaad0d.png?size=512'
         )
         
 
@@ -74,34 +68,15 @@ async def on_user_message(message):
     if not response:
         await not_recognized(message.author, 'dn-fetch')
 
+
   if message.content.startswith('dn-report'):
-    url = os.getenv('BASE_URL') + '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=7' 
-    headers = {
-        'Content-Type': 'application/vnd.api+json'
-    }
+    days = await calc_days(message)
+    resp = await get_report_from_db(message, days)
+    await show_user_report(resp, message, days)
 
-    resp = requests.request("GET", url, headers=headers)
-    resp = resp.json()
+ 
 
-    prompt = get_prompt_report()
-    prompt.add_field(
-        name="\nTotal questions solved:", value= str(resp["total_solved_ques"]), inline=False)
-
-    prompt.add_field(
-        name="Total ques:", value= str(resp["total_ques"]), inline=False)
-
-    resp.pop("total_ques")
-    resp.pop("total_solved_ques")
-    report = ""
-
-
-    if len(resp)>0:
-      for topic,cnt in resp.items():
-        report+= "\n" + topic + ": " + str(cnt)
-
-    prompt.add_field(name="Topics: ", value= report,inline=False)
-
-    await message.channel.send(embed= prompt)
+    
 
 
 
