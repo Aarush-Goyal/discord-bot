@@ -1,9 +1,8 @@
 import discord
 import requests
-import os 
+import os
 from utils import take_input_dm
 from dotenv import load_dotenv
-
 
 load_dotenv()
 BASE_URL = os.getenv('BASE_URL') + '/api/v1/contents'
@@ -36,7 +35,7 @@ def embed_content(embed, content):
     for i in range(len(content)):
 
         value = 'Use this command to fetch : ' + \
-            '`' + content[i]['unique_id'] + '`'
+                '`' + content[i]['unique_id'] + '`'
 
         if content[i]['link']:
             value = '[Link]({0})'.format(content[i]['link'])
@@ -50,7 +49,6 @@ def embed_content(embed, content):
 
 
 async def prompt_and_check(user, embed, content, input=True):
-
     embed = embed_content(embed, content)
     await user.send(embed=embed)
 
@@ -76,43 +74,41 @@ async def prompt_and_check(user, embed, content, input=True):
 
 
 async def fetch_content(user, unique_id):
-    
     # res = requests.get(BASE_URL+'?filter[parent_id]=' + unique_id)
 
-    print(BASE_URL+'?filter[parent_id]=' + unique_id)
-    url = BASE_URL+'?filter[parent_id]=' + unique_id
-    res={}
-    
+    print(BASE_URL + '?filter[parent_id]=' + unique_id)
+    url = BASE_URL + '?filter[parent_id]=' + unique_id
+    res = {}
+
     embed = discord.Embed(
         title='Resource',
         description='Choose the resource by typing out the name of the resource',
     )
-    
+
     payload = {}
     headers = {}
-    response = requests.request("GET", url, headers=headers,data=payload)
-    data=response.json()
-    
-    if(not data.status_code == 200):
+    response = requests.request("GET", url, headers=headers, data=payload)
+    data = response.json()
+
+    if not response.status_code == 200:
         return False
     else:
-        content = extract_content(res)
-        
+        content = extract_content(data)
+
         if not content:
             return False
 
         await prompt_and_check(user, embed, content, False)
-    
+
     return True
 
 
 async def fetch(user, command):
-
     command = command.content.split(' ')
 
     if len(command) > 1:
-        return await fetch_content(user,command[1])
-    
+        return await fetch_content(user, command[1])
+
     embed = discord.Embed(
         title='Resource',
         description='Choose the resource by typing out the name of the resource',
@@ -121,9 +117,9 @@ async def fetch(user, command):
     payload = {}
     headers = {}
 
-    #BASE_URL= 'http://127.0.0.1:3000/api/v1/contents'
+    # BASE_URL= 'http://127.0.0.1:3000/api/v1/contents'
     response = requests.request("GET", BASE_URL, headers=headers, data=payload)
-    data=response.json()
+    data = response.json()
 
     curriculums = extract_content(data)
     if not curriculums:
@@ -132,10 +128,10 @@ async def fetch(user, command):
     user_input = await prompt_and_check(user, embed, curriculums)
     if not user_input:
         return False
-    
-    url=BASE_URL + '?filter[parent_id]=' + user_input.content
+
+    url = BASE_URL + '?filter[parent_id]=' + user_input.content
     response = requests.request("GET", url, headers=headers, data=payload)
-    data=response.json()
+    data = response.json()
 
     subtopics = extract_content(data)
 
@@ -150,48 +146,52 @@ async def fetch(user, command):
 
 
 async def mark_ques_status(user, command, status):
-  unique_id=command.content.split(' ')[1]
-  res = await update_submissions(user,unique_id,status)
- 
-  if status == 1:
-    desc = "Marked done"
-  elif status == 0 or status == 2:
-    desc = "Marked undone"
+    unique_id = command.content.split(' ')[1]
+    res = await update_submissions(user, unique_id, status)
 
-  embed = discord.Embed(
-  title='Resource',
-  description= desc,
-  )
-  
-  if not res.status_code == 200:
-      return False
+    if status == 0:
+        desc = "Marked done"
+    elif status == 1:
+        desc = "Marked undone"
+    elif status == 2:
+        desc = "Marked doubt"
 
-  else:
-      content=extract_content(res)
-      
-      if not content:
-          return False
-      
-      await prompt_and_check(user,embed,content,False)
+    embed = discord.Embed(
+        title='Resource',
+        description=desc,
+    )
+
+    if not res.status_code == 200:
+        return False
+
+    else:
+        content = extract_content(res)
+
+        if not content:
+            await user.send(embed=embed)
+            return True
+
+        await prompt_and_check(user, embed, content, False)
 
 
-async def update_submissions(user,unique_id,status):
-  id = user.id
-  url = os.getenv('BASE_URL') + '/api/v1/submissions'
-  headers = {
-      'Content-Type': 'application/vnd.api+json'
-  }
+async def update_submissions(user, unique_id, status):
+    id = user.id
+    url = os.getenv('BASE_URL') + '/api/v1/submissions'
+    headers = {
+        'Content-Type': 'application/vnd.api+json'
+    }
 
-  myobj = {
-    "data":{
-      "attributes":{
-      "discord_id": id,
-      "question_unique_id": unique_id,
-      "status": status
-      },
-      "type": "submissions"
-  }
-  }
-# get response
-  res = requests.request("POST", url, headers=headers, json=myobj)
-  return res
+    myobj = {
+        "data": {
+            "attributes": {
+                "discord_id": id,
+                "question_unique_id": unique_id,
+                "status": status
+            },
+            "type": "submissions"
+        }
+    }
+    # get response
+    res = requests.request("POST", url, headers=headers, json=myobj)
+    print(res.status_code)
+    return res

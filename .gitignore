@@ -1,5 +1,6 @@
 .env
-__pycache__
 venv
-services/__pycache__
 .idea
+__pycache__
+services/__pycache__
+
