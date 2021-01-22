@@ -50,12 +50,12 @@ async def on_user_message(message):
             await not_recognized(message.author, 'dn-fetch')
 
     if message.content.startswith('dn-done'):
-        response = await mark_ques_status(message.author, message, 1)
+        response = await mark_ques_status(message.author, message, 0)
         if not response:
             await not_recognized(message.author, 'dn-fetch')
 
     if message.content.startswith('dn-undone'):
-        response = await mark_ques_status(message.author, message, 0)
+        response = await mark_ques_status(message.author, message, 1)
         if not response:
             await not_recognized(message.author, 'dn-fetch')
 
