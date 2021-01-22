@@ -2,22 +2,22 @@ import discord
 import os
 import asyncio
 
-import constants 
+import constants
 from client import client
 from discord.ext import tasks
 from utils import get_seconds_till_weekday
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 
 class GroupMeet:
     def __init__(self, client, channel_id):
-        self.channel_id = channel_id  #os.environ['GBU_CHANNEL']
+        self.channel_id = channel_id  # os.environ['GBU_CHANNEL']
         self.client = client
         self.is_active = False
         self.reaction_message = None
-        
+
         self.accepted_user_list = []
         self.rejected_user_list = []
         self.accepted_username_list = []
@@ -36,7 +36,7 @@ class GroupMeet:
 
     def _add_reaction_fields(self):
         self.prompt.add_field(
-            name="To accept the invite react with ",value="👍", inline=False)
+            name="To accept the invite react with ", value="👍", inline=False)
         self.prompt.add_field(
             name="To reject the invite react with ", value="👎", inline=False)
 
@@ -96,28 +96,30 @@ class GroupMeet:
     async def post_groups_to_channel(self):
 
         getMentionStr = lambda x: f"<@{str(x)}>"
-        getAssignedGroupPromptDescription = lambda grp: f"**Group Lead**: {getMentionStr(grp[0])}\n"+"**Members**: "+ " ".join(list(map(getMentionStr,grp)))
+        getAssignedGroupPromptDescription = lambda \
+            grp: f"**Group Lead**: {getMentionStr(grp[0])}\n" + "**Members**: " + " ".join(
+            list(map(getMentionStr, grp)))
         groups = [[
             234395307759108106, 235148962103951360, 270904126974590976,
             349920059549941761
         ],
-                  [
-                      364012500682932234, 437808476106784770,
-                      475744554910351370, 751440083810385930
-                  ],
-                  [
-                      751441607043317771, 759093668841259018,
-                      773604743293173770, 785888095111086122
-                  ],
-                  [
-                      797880775051051048, 798037393739087872,
-                      798089922807988235, 798205111578263562
-                  ],
-                  [
-                      798238857178382379, 798244797575856150,
-                      798421601560952862, 798493698219442286,
-                      799185187900096532
-                  ]]
+            [
+                364012500682932234, 437808476106784770,
+                475744554910351370, 751440083810385930
+            ],
+            [
+                751441607043317771, 759093668841259018,
+                773604743293173770, 785888095111086122
+            ],
+            [
+                797880775051051048, 798037393739087872,
+                798089922807988235, 798205111578263562
+            ],
+            [
+                798238857178382379, 798244797575856150,
+                798421601560952862, 798493698219442286,
+                799185187900096532
+            ]]
 
         prompt = discord.Embed(
             title='Assigned Groups',
@@ -130,7 +132,7 @@ class GroupMeet:
         for idx, grp in enumerate(groups):
             prompt.add_field(
                 name=
-                f"-------------------'Group-{str(idx+1).zfill(2)}'-------------------",
+                f"-------------------'Group-{str(idx + 1).zfill(2)}'-------------------",
                 value=getAssignedGroupPromptDescription(grp),
                 inline=False)
 

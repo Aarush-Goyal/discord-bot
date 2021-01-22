@@ -63,6 +63,7 @@ async def not_recognized(user,correct_command):
     )
     await user.send(embed=embed)
 
+
 # def send_request(method_type, url, data):
 #   url = BASE_URL + url
 #   pass
