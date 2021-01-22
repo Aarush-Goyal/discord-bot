@@ -13,10 +13,11 @@ load_dotenv()
 
 def get_prompt_help():
     return discord.Embed(
-        title='DN Bot Guide', description="Use these commands for smooth experience on the platform \n"
-    ).set_thumbnail(
-        url='https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png'
-    )
+          title='DN Bot Guide', description= "DN Bot is especially designed for the users of Devsnest Community."
+          + "DN bot is always there to help and make your learning fun. Use the below commands for smooth experience on the platform \n"
+        ).set_thumbnail(
+            url = 'https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png'
+        )
 
 
 async def on_user_message(message):
@@ -28,7 +29,14 @@ async def on_user_message(message):
         await message.channel.send(msg)
 
     if message.content.startswith('dn-help'):
-        msg = 'dn-help: To get command help \n dn-ask: To contact moderators \n dn-fetch: To get list of questions \n dn-done: To mark question done \n dn-undone: To mark question undone \n dn-doubt: To get mark question as doubt \n dn-report: To get progress report \n dn-leaderboard: To get list of top 10 students of week \n '
+        msg = 'dn-help: To get command help \n'  
+        #  'dn-ask: To contact moderators \n' +
+        #  'dn-fetch: To get list of questions \n' +
+        #  'dn-done: To mark question done \n' + 
+        #  'dn-undone: To mark question undone \n' + 
+        #  'dn-doubt: To get mark question as doubt \n' + 
+        #  'dn-report: To get progress report \n' + 
+        #  'dn-leaderboard: To get list of top 10 students of week \n '
 
         prompt = get_prompt_help()
         prompt.add_field(

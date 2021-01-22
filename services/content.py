@@ -34,8 +34,8 @@ def embed_content(embed, content):
 
     for i in range(len(content)):
 
-        value = 'Use this command to fetch : ' + \
-                '`' + content[i]['unique_id'] + '`'
+        value = 'Use command ' + \
+                '`' + "dn-fetch " + content[i]['unique_id'] + '`'
 
         if content[i]['link']:
             value = '[Link]({0})'.format(content[i]['link'])
@@ -82,7 +82,7 @@ async def fetch_content(user, unique_id):
 
     embed = discord.Embed(
         title='Resource',
-        description='Choose the resource by typing out the name of the resource',
+        description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. For example: If you wish to solve a question of array, type dn-fetch Arrays',
     )
 
     payload = {}
@@ -111,7 +111,7 @@ async def fetch(user, command):
 
     embed = discord.Embed(
         title='Resource',
-        description='Choose the resource by typing out the name of the resource',
+       description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. For example: If you wish to solve a question of array, type dn-fetch Arrays',
     )
 
     payload = {}

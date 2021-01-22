@@ -5,14 +5,18 @@ import constants
 from discord.ext import tasks
 from client import client
 from utils import get_seconds_till_weekday
-from dotenv import load_dotenv
 
+def show_GBU_prompt(name):
+    return discord.Embed(
+          title= name + "'s GBU for the week"
+        ).set_thumbnail(
+            url = 'https://www.pngfind.com/pngs/m/326-3261800_person-thinking-png-thinking-icon-transparent-png.png'
+        )
 
-load_dotenv()
 
 async def get_from_user(member, ques):
   prompt = discord.Embed(
-    title='Welcome', description='Please enter your ' + ques)
+    title="Hey, it's Introspection Time!", description='Tell us something ' + ques + ' about the week!')
 
   await member.send(embed=prompt)
 
@@ -22,7 +26,7 @@ async def get_from_user(member, ques):
 
     res = await client.wait_for("message",check=check, timeout=518400000)
     if res:
-      await member.send('your recieved gbu : {0}'.format(res.content))
+      await member.send('You filled: {0}'.format(res.content))
 
   except asyncio.TimeoutError:
     await member.send(
@@ -37,14 +41,18 @@ async def get_user_gbu(message_channel, member):
     ugly = await get_from_user(member, "ugly")
 
     if good and bad and ugly:
-      msg = '{0.mention}'.format(member) + ' has entered the GBU for this week: \n' + 'GOOD:' + good.content + '\nBAD: ' + bad.content + '\nUGLY: ' + ugly.content
-      await message_channel.send(msg)
+      gbu_prompt = show_GBU_prompt(member.name)
+      gbu_prompt.add_field(name="Good : ", value= good.content,inline=False)
+      gbu_prompt.add_field(name="Bad : ", value= bad.content,inline=False)
+      gbu_prompt.add_field(name="Ugly : ", value= ugly.content,inline=False)
+
+      await message_channel.send(embed= gbu_prompt)
       print('sending')
 
 
 @tasks.loop(hours=168.0)  # 168 hours in a week
 async def called_once_a_week_gbu():
-    message_channel = client.get_channel(int(os.getenv('GBU_CHANNEL')))
+    message_channel = client.get_channel(int(os.environ['GBU_CHANNEL']))
     print(f"Got channel {message_channel}")
     tasks = []
 
@@ -56,7 +64,6 @@ async def called_once_a_week_gbu():
     loop.run_until_complete(asyncio.wait(tasks))
     loop.close()
 
-# Runs before the task(when the bot comes online) and schedule it for next sunday
 @called_once_a_week_gbu.before_loop
 async def before_gbu():
     await client.wait_until_ready()
