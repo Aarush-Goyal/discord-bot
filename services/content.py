@@ -195,9 +195,6 @@ async def mark_ques_status(user, command, status):
     if not res.status_code == 200:
         return False
 
-    if False:
-        return False
-
     else:
         content = extract_content(res)
         if not content:
