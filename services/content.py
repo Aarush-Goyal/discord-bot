@@ -1,6 +1,7 @@
 import discord
 import requests
 import os
+from client import client
 from utils import take_input_dm
 from dotenv import load_dotenv
 
@@ -38,10 +39,10 @@ def embed_content(embed, content):
                 '`' + "dn-fetch " + content[i]['unique_id'] + '`'
 
         if content[i]['link']:
-            value = '[Link]({0})'.format(content[i]['link'])
+            value = '[{0}]({0})'.format(content[i]['link'])
 
         embed.add_field(
-            name=content[i]['name'].capitalize(),
+            name='`' + content[i]['unique_id'] + '`' + content[i]['name'].capitalize(),
             value=value,
             inline=False,
         )
@@ -74,7 +75,7 @@ async def prompt_and_check(user, embed, content, input=True):
 
 
 async def fetch_content(user, unique_id):
-    # res = requests.get(BASE_URL+'?filter[parent_id]=' + unique_id)
+    res = requests.get(BASE_URL+'?filter[parent_id]=' + unique_id)
 
     print(BASE_URL + '?filter[parent_id]=' + unique_id)
     url = BASE_URL + '?filter[parent_id]=' + unique_id
@@ -145,6 +146,36 @@ async def fetch(user, command):
     return True
 
 
+
+async def send_done_in_channel(user, unique_id):
+
+    # TODO Uncommnent
+    res=requests.get(BASE_URL + '?filter[unique_id]=' + unique_id)
+
+    try:
+        question_name=res['data'][0]['attributes']['name']
+        question_link=res['data'][0]['attributes']['link']
+    except:
+        return False
+    
+    embed = discord.Embed(
+        title='Status Update',
+        description='{0} has solved Question `{1}`'.format(
+        user.mention, question_name)
+    )
+
+    embed.add_field(name="Question Link",value="You can also try it [here]({0})".format(question_link),inline=False)
+    embed.add_field(name="Unique ID",value=("Question Unique ID : "+'`'+unique_id+'`'),inline=False)    
+    
+    confetti_png=str('https://www.kindpng.com/picc/m/555-5554493_confetti-emoji-hd-png-download.png')
+    
+    embed.set_thumbnail(url=confetti_png)
+    
+    ch = client.get_channel(int(os.getenv('GROUPMEET_CHANNEL')))
+
+    await ch.send(embed=embed)
+
+
 async def mark_ques_status(user, command, status):
     unique_id = command.content.split(' ')[1]
     res = await update_submissions(user, unique_id, status)
@@ -166,9 +197,12 @@ async def mark_ques_status(user, command, status):
 
     else:
         content = extract_content(res)
-
         if not content:
             await user.send(embed=embed)
+
+            if status == 0:
+                await send_done_in_channel(user, unique_id)
+
             return True
 
         await prompt_and_check(user, embed, content, False)
