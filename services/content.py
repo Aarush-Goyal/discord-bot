@@ -39,10 +39,10 @@ def embed_content(embed, content):
                 '`' + content[i]['unique_id'] + '`'
 
         if content[i]['link']:
-            value = '[Link]({0})'.format(content[i]['link'])
+            value = '[{0}]({0})'.format(content[i]['link'])
 
         embed.add_field(
-            name=content[i]['name'].capitalize(),
+            name='`' + content[i]['unique_id'] + '`' + content[i]['name'].capitalize(),
             value=value,
             inline=False,
         )
