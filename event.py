@@ -60,24 +60,24 @@ async def on_user_message(message):
     if message.content.startswith('dn-done'):
         response = await mark_ques_status(message.author, message, 0)
         if not response:
-            await not_recognized(message.author, 'dn-fetch')
+            await not_recognized(message.author, 'dn-help')
 
     if message.content.startswith('dn-undone'):
         response = await mark_ques_status(message.author, message, 1)
         if not response:
-            await not_recognized(message.author, 'dn-fetch')
+            await not_recognized(message.author, 'dn-help')
 
     if message.content.startswith('dn-doubt'):
         response = await mark_ques_status(message.author, message, 2)
         if not response:
-            await not_recognized(message.author, 'dn-fetch')
+            await not_recognized(message.author, 'dn-help')
 
     if message.content.startswith('dn-report'):
         days = await calc_days(message)
         resp = await get_report_from_db(message, days)
         await show_user_report(resp, message, days)
+
     if message.content.startswith('dn-leaderboard'):
         leaderboard = await get_leaderboard(message.author)
         if not leaderboard:
-            await submit_user_details(user_email, message.author)
-            print('sending')
+            await not_recognized(message.author,'dn-help')
