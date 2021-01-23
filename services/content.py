@@ -237,7 +237,6 @@ async def update_submissions(user, unique_id, status):
    
     return res
 
-
 def embed_leaderboard(embed, leaderboard):
     embed.clear_fields()
 
