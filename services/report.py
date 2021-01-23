@@ -30,19 +30,19 @@ async def get_report_from_db(message, days):
 
 def get_prompt_report(days):
     return discord.Embed(
-          title='DN User Report of ' + str(days) + ' days'
+          title= 'YOUR REPORT FOR LAST ' + str(days) + ' DAYS'
         ).set_thumbnail(
-            url = 'https://images.discordapp.net/avatars/535595120175611915/004416b242f631c5052ed81c3ddaad0d.png?size=512'
+            url = 'https://media4.giphy.com/media/3orieMyfgezWc93UOc/200.gif'
         )
 
 
 async def show_user_report(resp, message, days):
     prompt = get_prompt_report(days)
     prompt.add_field(
-        name="\nTotal questions solved:", value= str(resp["total_solved_ques"]), inline=False)
+        name="Total questions solved", value= str(resp["total_solved_ques"]), inline=False)
 
     prompt.add_field(
-        name="Total ques:", value= str(resp["total_ques"]), inline=False)
+        name="Total number of questions:", value= str(resp["total_ques"]), inline=False)
 
     resp.pop("total_ques")
     resp.pop("total_solved_ques")
@@ -51,8 +51,8 @@ async def show_user_report(resp, message, days):
 
     if len(resp)>0:
       for topic,cnt in resp.items():
-        report+= "\n" + topic + ": " + str(cnt)
+        report+= "\n" + '`' + topic.capitalize() + '`' + "  :  " + str(cnt)
 
-    prompt.add_field(name="Topics: ", value= report,inline=False)
+    prompt.add_field(name="Question solved per topic: ", value= report,inline=False)
 
     await message.channel.send(embed= prompt)
