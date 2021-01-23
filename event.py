@@ -29,14 +29,7 @@ async def on_user_message(message):
         await message.channel.send(msg)
 
     if message.content.startswith('dn-help'):
-        msg = 'dn-help: To get command help \n'  
-        #  'dn-ask: To contact moderators \n' +
-        #  'dn-fetch: To get list of questions \n' +
-        #  'dn-done: To mark question done \n' + 
-        #  'dn-undone: To mark question undone \n' + 
-        #  'dn-doubt: To get mark question as doubt \n' + 
-        #  'dn-report: To get progress report \n' + 
-        #  'dn-leaderboard: To get list of top 10 students of week \n '
+        msg = 'dn-help: To get command help \n \n dn-fetch: To get list of questions \n \n dn-mark-done: To mark question done \n \n dn-mark-undone: To mark question undone \n \n dn-mark-doubt: To get mark question as doubt \n \n dn-report: To get progress report \n \n dn-leaderboard: To get list of top 10 students of week \n '
 
         prompt = get_prompt_help()
         prompt.add_field(
@@ -54,23 +47,15 @@ async def on_user_message(message):
 
     if message.content.startswith('dn-fetch'):
         response = await fetch(message.author, message)
-        if not response:
-            await not_recognized(message.author, 'dn-fetch')
 
-    if message.content.startswith('dn-done'):
+    if message.content.startswith('dn-mark-done'):
         response = await mark_ques_status(message.author, message, 0)
-        if not response:
-            await not_recognized(message.author, 'dn-fetch')
 
-    if message.content.startswith('dn-undone'):
+    if message.content.startswith('dn-mark-undone'):
         response = await mark_ques_status(message.author, message, 1)
-        if not response:
-            await not_recognized(message.author, 'dn-fetch')
 
-    if message.content.startswith('dn-doubt'):
+    if message.content.startswith('dn-mark-doubt'):
         response = await mark_ques_status(message.author, message, 2)
-        if not response:
-            await not_recognized(message.author, 'dn-fetch')
 
     if message.content.startswith('dn-report'):
         days = await calc_days(message)

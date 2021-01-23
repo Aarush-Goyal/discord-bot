@@ -25,8 +25,8 @@ async def assign_mentors_to_all(member):
     user = await client.fetch_user(int(user_discord_id))
     mentor = await client.fetch_user(int(mentor_discord_id))
 
-    user_msg = 'Your new mentor is: {0.mention}'.format(mentor)
-    mentor_msg = 'Your new mentee is: {0.mention}'.format(user)
+    user_msg = 'Your new mentor is: {0.mention}'.format(mentor) + '\n Feel free to schedule sessions weekly along with the mentor and get your doubts resolved weekly. '
+    mentor_msg = 'Your new mentee is: {0.mention}'.format(user) + '\n You are required to give a dedicated amount of time to your mentee and help him to get his/her doubts resolved.'
     user_prompt = get_basic_prompt(user_msg)
     mentor_prompt = get_basic_prompt(mentor_msg)
 

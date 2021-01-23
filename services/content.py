@@ -22,10 +22,8 @@ def extract_content(sample):
                 temp['link'] = None
             content.append(temp)
 
-        print(content)
-
     except:
-        print('Cannot get curriculums')
+        #Cannot get curriculums
         content = False
     return content
 
@@ -42,7 +40,7 @@ def embed_content(embed, content):
             value = '[{0}]({0})'.format(content[i]['link'])
 
         embed.add_field(
-            name='`' + content[i]['unique_id'] + '`' + content[i]['name'].capitalize(),
+            name='`' + content[i]['unique_id'] + '` ' + content[i]['name'].capitalize(),
             value=value,
             inline=False,
         )
@@ -83,7 +81,7 @@ async def fetch_content(user, unique_id):
 
     embed = discord.Embed(
         title='Resource',
-        description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. For example: If you wish to solve a question of array, type dn-fetch Arrays',
+        description='Let us solve some questions now. Here is a list of questions for you to solve. Reach out to these questions using below link. Once you start solving the question you can mark the status as done, undone or doubt using command dn-mark-[status] [Question no.]. For example if you want to mark Q1 as done enter command dn-mark-done Q1',
     )
 
     payload = {}
@@ -181,11 +179,11 @@ async def mark_ques_status(user, command, status):
     res = await update_submissions(user, unique_id, status)
 
     if status == 0:
-        desc = "Marked done"
+        desc = "This question has been marked as done"
     elif status == 1:
-        desc = "Marked undone"
+        desc = "This question has been marked as undone"
     elif status == 2:
-        desc = "Marked doubt"
+        desc = "This question has been marked as doubt"
 
     embed = discord.Embed(
         title='Resource',
