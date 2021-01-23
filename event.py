@@ -67,7 +67,7 @@ async def on_user_message(message):
         response = await mark_ques_status(message.author, message, 2)
 
         if not response:
-            await not_recognized(message.author, 'dn-help'
+            await not_recognized(message.author, 'dn-help')
 
     if message.content.startswith('dn-report'):
         days = await calc_days(message)
