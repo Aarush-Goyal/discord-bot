@@ -34,13 +34,18 @@ def embed_content(embed, content):
     for i in range(len(content)):
 
         value = 'Use command ' + \
-                '`' + "dn-fetch " + content[i]['unique_id'] + '`'
+                '`' + "dn-fetch " + content[i]['unique_id'].capitalize() + '`'
 
         if content[i]['link']:
             value = '[{0}]({0})'.format(content[i]['link'])
 
+        if content[i]['name']:
+            name ='`' + content[i]['unique_id'].capitalize() + '`  ' + content[i]['name'].capitalize()
+        else:
+            name='`' + content[i]['unique_id'].capitalize() + '`'
+
         embed.add_field(
-            name='`' + content[i]['unique_id'] + '` ' + content[i]['name'].capitalize(),
+            name= name,            
             value=value,
             inline=False,
         )
@@ -80,8 +85,8 @@ async def fetch_content(user, unique_id):
     res = {}
 
     embed = discord.Embed(
-        title='Resource',
-        description='Let us solve some questions now. Here is a list of questions for you to solve. Reach out to these questions using below link. Once you start solving the question you can mark the status as done, undone or doubt using command dn-mark-[status] [Question no.]. For example if you want to mark Q1 as done enter command dn-mark-done Q1',
+        title= unique_id + ' Questions 💻',
+        description='Let us solve some questions now. Here is a list of questions for you to solve. Reach out to these questions using below link. \n \n Once you start solving the question you can mark the status as done, undone or doubt using command dn-mark-[status] [Question no.]. \n \n For example if you want to mark Q1 as done enter command dn-mark-done Q1. \n Happy Learning 😀',
     )
 
     payload = {}
@@ -109,29 +114,29 @@ async def fetch(user, command):
         return await fetch_content(user, command[1])
 
     embed = discord.Embed(
-        title='Resource',
-       description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. For example: If you wish to solve a question of array, type dn-fetch Arrays',
+        title='Topics 💻',
+       description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. \n \n For example: If you wish to solve a question of array, type dn-fetch Arrays \n \n',
     )
 
     payload = {}
     headers = {}
 
     # BASE_URL= 'http://127.0.0.1:3000/api/v1/contents'
-    response = requests.request("GET", BASE_URL, headers=headers, data=payload)
+    response = requests.request("GET", BASE_URL + '?filter[parent_id]=algo', headers=headers, data=payload)
     data = response.json()
 
     curriculums = extract_content(data)
     if not curriculums:
         return False
-
+    
     user_input = await prompt_and_check(user, embed, curriculums)
     if not user_input:
         return False
-
+   
     url = BASE_URL + '?filter[parent_id]=' + user_input.content
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
-
+    
     subtopics = extract_content(data)
 
     if not subtopics:
@@ -148,12 +153,14 @@ async def fetch(user, command):
 async def send_done_in_channel(user, unique_id):
 
     # TODO Uncommnent
-    res=requests.get(BASE_URL + '?filter[unique_id]=' + unique_id)
-
+    res=requests.get( BASE_URL + '?filter[unique_id]=' + unique_id)
+    res=res.json()
+    print(res)
     try:
         question_name=res['data'][0]['attributes']['name']
         question_link=res['data'][0]['attributes']['link']
     except:
+        
         return False
     
     embed = discord.Embed(
@@ -179,14 +186,13 @@ async def mark_ques_status(user, command, status):
     res = await update_submissions(user, unique_id, status)
 
     if status == 0:
-        desc = "This question has been marked as done"
+        desc = "Congratulations‼ \n This question has been marked as done. Keep Going 😄"
     elif status == 1:
-        desc = "This question has been marked as undone"
+        desc = "Hey, This question has been marked as undone. Try solving it. All the best‼ 😎"
     elif status == 2:
-        desc = "This question has been marked as doubt"
-
+        desc = "Seems like, you're Stuck‼ 😶 \n This question has been marked as doubt. \n Try solving, Incase you are not able to solve, feel free to contact your mentor. Let this not hinder your learning 👍 "
     embed = discord.Embed(
-        title='Resource',
+        title='Question status marked successfully 👍 ',
         description=desc,
     )
 
@@ -200,7 +206,6 @@ async def mark_ques_status(user, command, status):
 
             if status == 0:
                 await send_done_in_channel(user, unique_id)
-
             return True
 
         await prompt_and_check(user, embed, content, False)
@@ -225,5 +230,5 @@ async def update_submissions(user, unique_id, status):
     }
     # get response
     res = requests.request("POST", url, headers=headers, json=myobj)
-    print(res.status_code)
+   
     return res
