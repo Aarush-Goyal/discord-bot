@@ -2,7 +2,7 @@ import discord
 import requests
 import os
 from client import client
-from utils import take_input_dm
+from utils import take_input_dm, send_request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -45,7 +45,8 @@ def embed_content(embed, content):
             name='`' + content[i]['unique_id'].capitalize() + '`'
 
         embed.add_field(
-            name= name,            
+            name='`' + content[i]['unique_id'] +
+            '`' + content[i]['name'].capitalize(),            
             value=value,
             inline=False,
         )
@@ -149,33 +150,36 @@ async def fetch(user, command):
     return True
 
 
-
 async def send_done_in_channel(user, unique_id):
 
     # TODO Uncommnent
     res=requests.get( BASE_URL + '?filter[unique_id]=' + unique_id)
     res=res.json()
     print(res)
+
     try:
-        question_name=res['data'][0]['attributes']['name']
-        question_link=res['data'][0]['attributes']['link']
+        question_name = res['data'][0]['attributes']['name']
+        question_link = res['data'][0]['attributes']['link']
     except:
         
         return False
-    
+
     embed = discord.Embed(
         title='Status Update',
         description='{0} has solved Question `{1}`'.format(
-        user.mention, question_name)
+            user.mention, question_name)
     )
 
-    embed.add_field(name="Question Link",value="You can also try it [here]({0})".format(question_link),inline=False)
-    embed.add_field(name="Unique ID",value=("Question Unique ID : "+'`'+unique_id+'`'),inline=False)    
-    
-    confetti_png=str('https://www.kindpng.com/picc/m/555-5554493_confetti-emoji-hd-png-download.png')
-    
+    embed.add_field(name="Question Link", value="You can also try it [here]({0})".format(
+        question_link), inline=False)
+    embed.add_field(name="Unique ID", value=(
+        "Question Unique ID : "+'`'+unique_id+'`'), inline=False)
+
+    confetti_png = str(
+        'https://www.kindpng.com/picc/m/555-5554493_confetti-emoji-hd-png-download.png')
+
     embed.set_thumbnail(url=confetti_png)
-    
+
     ch = client.get_channel(int(os.getenv('GROUPMEET_CHANNEL')))
 
     await ch.send(embed=embed)
@@ -232,3 +236,37 @@ async def update_submissions(user, unique_id, status):
     res = requests.request("POST", url, headers=headers, json=myobj)
    
     return res
+
+
+def embed_leaderboard(embed, leaderboard):
+    embed.clear_fields()
+
+    for i in range(len(leaderboard)):
+
+        name = leaderboard[i]['name'].capitalize()
+        score = leaderboard[i]['score']
+
+        embed.add_field(
+            name=name,
+            value='has solved {0} questions this week.'.format(score),
+            inline=False,
+        )
+
+    return embed
+
+
+async def get_leaderboard(user):
+    headers = {'Content-Type': 'application/json'}
+    url = os.getenv('BASE_URL')+'/api/v1/users/leaderboard'
+    response = requests.request("GET", url, headers=headers)
+
+    res = response.json()
+    
+    embed = discord.Embed(title='Leaderboard',description='top performers this week')
+    embed = embed_leaderboard(embed, res)
+    
+    leaderboard_png='https://img.icons8.com/cotton/2x/leaderboard.png'
+    embed.set_thumbnail(url=leaderboard_png)
+    
+    await user.send(embed=embed)
+    return True
