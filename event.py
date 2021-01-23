@@ -1,6 +1,7 @@
 from utils import not_recognized
 from services.user import get_user_email_and_id, submit_user_details
-from services.content import fetch, mark_ques_status, get_leaderboard
+from services.content import fetch, mark_ques_status
+#get_leaderboard
 from services.mmt import assign_mentors_to_all
 from services.report import get_report_from_db, show_user_report, calc_days
 import discord
@@ -76,8 +77,3 @@ async def on_user_message(message):
         days = await calc_days(message)
         resp = await get_report_from_db(message, days)
         await show_user_report(resp, message, days)
-    if message.content.startswith('dn-leaderboard'):
-        leaderboard = await get_leaderboard(message.author)
-        if not leaderboard:
-            await submit_user_details(user_email, message.author)
-            print('sending')

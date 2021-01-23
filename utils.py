@@ -6,9 +6,11 @@ import discord
 import asyncio
 from client import client
 import requests
+import os
 
 # Timezone
-BASE_URL = "https://devsnest.in/api/v1"
+BASE_URL = "http://localhost:3000" + '/api/v1'
+
 IST = pytz.timezone('Asia/Kolkata')
 
 # Index for Sunday

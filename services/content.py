@@ -230,33 +230,3 @@ async def update_submissions(user, unique_id, status):
     print(res.status_code)
     return res
 
-def embed_leaderboard(embed, leaderboard):
-    embed.clear_fields()
-
-    for i in range(len(leaderboard)):
-
-        value = leaderboard[i]['name']
-        score = leaderboard[i]['score']
-
-        embed.add_field(
-            name=value,
-            score=score,
-            inline=False,
-        )
-    return embed
-async def get_leaderboard(user):
-    headers = {'Content-Type': 'application/json'}
-    url = leaderboard_url+'/api/v1/users/leaderboard'
-
-    response = requests.request("GET", url, headers=headers)
-
-    res=response.json()
-    data= extract_content(res)
-    
-    prompt = discord.Embed(title='Leaderboard',
-                           description= 'top performers this week')
-    print(data)
-    return data
-    
-    # embed= embed_leaderboard(prompt, data)    
-    # await user.send(embed=embed)
