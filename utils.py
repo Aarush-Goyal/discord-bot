@@ -5,7 +5,7 @@ import pytz
 import discord
 import asyncio
 from client import client
-# import request
+import requests
 
 # Timezone
 BASE_URL = "https://devsnest.in/api/v1"
@@ -64,7 +64,6 @@ async def not_recognized(user,correct_command):
     await user.send(embed=embed)
 
 
-# def send_request(method_type, url, data):
-#   url = BASE_URL + url
-#   pass
-
+async def send_request(method_type, url, headers, data=None):
+    url = BASE_URL + url
+    return requests.request(method_type, url, headers=headers, json=data)

@@ -5,7 +5,7 @@ import asyncio
 import constants
 from client import client
 from discord.ext import tasks
-from utils import get_seconds_till_weekday
+from utils import get_seconds_till_weekday, send_request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -91,35 +91,56 @@ class GroupMeet:
             await self.reaction_message.edit(embed=self.prompt)
 
     async def add_users_to_db(self):
-        pass
+        headers = {'Content-Type': 'application/json'}
+
+        payload = {
+            "data": {
+                "attributes": {
+                    "discord_id": str(user_id),
+                    "choice": choice
+                }
+            }
+        }
+        await send_request(method_type="POST", url="groupcalls/", headers=headers, data=payload)
+
 
     async def post_groups_to_channel(self):
+        headers = {'Content-Type': 'application/json'}
+
+        groups_list = await send_request(method_type="GET", url="groupcalls/", headers=headers).json()
+
+        groups = {}
+        for data in groups_list:
+            user_id, idx = data
+            if idx not in groups:
+                groups[idx] = []
+            groups[idx].append(user_id)
 
         getMentionStr = lambda x: f"<@{str(x)}>"
         getAssignedGroupPromptDescription = lambda \
             grp: f"**Group Lead**: {getMentionStr(grp[0])}\n" + "**Members**: " + " ".join(
             list(map(getMentionStr, grp)))
-        groups = [[
-            234395307759108106, 235148962103951360, 270904126974590976,
-            349920059549941761
-        ],
-            [
-                364012500682932234, 437808476106784770,
-                475744554910351370, 751440083810385930
-            ],
-            [
-                751441607043317771, 759093668841259018,
-                773604743293173770, 785888095111086122
-            ],
-            [
-                797880775051051048, 798037393739087872,
-                798089922807988235, 798205111578263562
-            ],
-            [
-                798238857178382379, 798244797575856150,
-                798421601560952862, 798493698219442286,
-                799185187900096532
-            ]]
+        # groups = [[
+        #     234395307759108106, 235148962103951360, 270904126974590976,
+        #     349920059549941761
+        # ],
+        #     [
+        #         364012500682932234, 437808476106784770,
+        #         475744554910351370, 751440083810385930
+        #     ],
+        #     [
+        #         751441607043317771, 759093668841259018,
+        #         773604743293173770, 785888095111086122
+        #     ],
+        #     [
+        #         797880775051051048, 798037393739087872,
+        #         798089922807988235, 798205111578263562
+        #     ],
+        #     [
+        #         798238857178382379, 798244797575856150,
+        #         798421601560952862, 798493698219442286,
+        #         799185187900096532
+        #     ]]
 
         prompt = discord.Embed(
             title='Assigned Groups',
