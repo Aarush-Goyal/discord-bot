@@ -254,18 +254,18 @@ def embed_leaderboard(embed, leaderboard):
     return embed
 
 
-async def get_leaderboard(user):
+async def get_leaderboard(message):
     headers = {'Content-Type': 'application/json'}
     url = os.getenv('BASE_URL')+'/api/v1/users/leaderboard'
     response = requests.request("GET", url, headers=headers)
 
     res = response.json()
     
-    embed = discord.Embed(title='Leaderboard',description='top performers this week')
+    embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
     embed = embed_leaderboard(embed, res)
     
-    leaderboard_png='https://img.icons8.com/cotton/2x/leaderboard.png'
+    leaderboard_png='https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif'
     embed.set_thumbnail(url=leaderboard_png)
     
-    await user.send(embed=embed)
+    await message.channel.send(embed=embed)
     return True

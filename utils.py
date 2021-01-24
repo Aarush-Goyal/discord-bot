@@ -52,7 +52,7 @@ async def take_input_dm(user):
         
     except asyncio.TimeoutError:
         await user.send(
-            'Sorry, You didn\'t replied in time.'
+            'Sorry, You didn\'t reply on time.'
         )
         user_input = False
     

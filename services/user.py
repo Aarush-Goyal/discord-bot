@@ -8,18 +8,28 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
+def get_user_joined_prompt():
+    return discord.Embed(
+          title='Devsnest Community'
+        ).set_thumbnail(
+            url = 'https://miro.medium.com/max/1600/0*C-cPP9D2MIyeexAT.gif'
+        )
+
+# Send greeting msg to new user and post user details in DB
 async def new_member_joined(member, GREETING_CHANNEL):
   ch = client.get_channel(GREETING_CHANNEL)
 
-  new_user_message = "New member " + member.name + " has joined the channel."
-  await ch.send(new_user_message)
+  new_user_message = "New member " + member.name + " has joined the channel. Please everyone welcome " + member.name
 
-  user_email = await get_user_email_and_id(member)
-  if user_email:
-    resp = await submit_user_details(user_email,member)
-  
+  user_prompt = get_user_joined_prompt()
+  user_prompt.add_field(name=" Welcome ", value= new_user_message, inline=False)
+  await ch.send(embed= user_prompt)
+
+  #user_email = await get_user_email_and_id(member)
+  user_email = "temp@gmail.com"         #temporarily
+  # if user_email:
+  resp = await submit_user_details(user_email, member)  
   return resp
-
 
 
 async def get_user_email_and_id(user):
@@ -77,3 +87,4 @@ async def submit_user_details(user_email, member):
 
     resp = requests.request("POST", url, headers=headers, json=myobj)
     resp = resp.json()
+    return resp
