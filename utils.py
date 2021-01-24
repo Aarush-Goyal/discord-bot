@@ -8,7 +8,7 @@ from client import client
 import requests
 
 # Timezone
-BASE_URL = "https://devsnest.in/api/v1"
+BASE_URL = "http://localhost:3000/api/v1/"
 IST = pytz.timezone('Asia/Kolkata')
 
 # Index for Sunday
@@ -66,4 +66,5 @@ async def not_recognized(user,correct_command):
 
 async def send_request(method_type, url, headers, data=None):
     url = BASE_URL + url
-    return requests.request(method_type, url, headers=headers, json=data)
+    response = requests.request(method_type, url, headers=headers, json=data)
+    return response
