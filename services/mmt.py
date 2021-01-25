@@ -48,7 +48,7 @@ async def assign_mentor_to_new_user(resp):
   user = await client.fetch_user(int(user_discord_id)) 
   mentor = await client.fetch_user(int(mentor_discord_id))
 
-  user_msg = 'Welcome to Devsnest community. This is a world of peer learning. Your initial mentor is: {0.mention}'.format(mentor) + '\n Feel free to schedule sessions weekly along with the mentor and get your doubts resolved weekly. Let the learning begin!👍 '
+  user_msg = 'Welcome to Devsnest community. This is a world of peer learning. \n You can use dn-help command to get access to various options and play with the bot and make your learning ahead fun. \n \n Here we follow a mentor-mentee system so that everyone has access to someone who can clear doubts. Your initial mentor is: {0.mention}'.format(mentor) + '\n Feel free to schedule sessions weekly along with the mentor and get your doubts resolved weekly. Let the learning begin!👍 '
   mentor_msg = 'Hope you are having a great time! \n New Member has joined the channel now. {0.mention}'.format(user) + '\n He is your mentee for this week. \n You are required to help him with the server and give a dedicated amount of time to your mentee and help user to get doubts resolved. Continue learning 👍 '
   user_prompt = get_basic_prompt(user_msg)
   mentor_prompt = get_basic_prompt(mentor_msg)

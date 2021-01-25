@@ -50,7 +50,7 @@ async def on_user_message(message):
             response = await fetch(message.author, message)
 
     if message.content.startswith('dn-mark-done'):
-        if await check_channel_ask_a_bot(message):
+        # if await check_channel_ask_a_bot(message):
             response = await mark_ques_status(message.author, message, 0)
 
             if not response:

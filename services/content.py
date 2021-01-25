@@ -170,13 +170,13 @@ async def send_done_in_channel(user, unique_id):
             user.mention, question_name)
     )
 
-    embed.add_field(name="Question Link", value="You can also try it [here]({0})".format(
+    embed.add_field(name="You can too give it a shot now!", value="Try it [here]({0})".format(
         question_link), inline=False)
-    embed.add_field(name="Unique ID", value=(
-        "Question Unique ID : "+'`'+unique_id+'`'), inline=False)
+    # embed.add_field(name="Unique ID", value=(
+    #     "Question Unique ID : "+'`'+unique_id+'`'), inline=False)
 
     confetti_png = str(
-        'https://www.kindpng.com/picc/m/555-5554493_confetti-emoji-hd-png-download.png')
+        'https://media1.tenor.com/images/ed2bcee37ffb2944ecafec3e852d6014/tenor.gif?itemid=10369910')
 
     embed.set_thumbnail(url=confetti_png)
 

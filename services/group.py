@@ -31,7 +31,7 @@ class GroupMeet:
         return discord.Embed(
             title='Group Meet ', description=self.description
         ).set_thumbnail(
-            url='https://community.pepperdine.edu/it/images/googlemeetsmall.jpg'
+            url='src="https://media1.giphy.com/media/26uf8hTvzYZ6OQc3m/giphy.gif?cid=ecf05e479bc4c21d9607663f14dfafd69f4744e94e9ccc9d&rid=giphy.gif"'
         )
 
     def _add_reaction_fields(self):
@@ -133,7 +133,7 @@ class GroupMeet:
         prompt = discord.Embed(
             title='Assigned Groups',
             description=
-            "Pls, find your respected groups for this week's Group Meeting"
+            "Pls, find your respected groups for this week's Group Meeting. \n The group meeting is scheduled at 9 pm tonight"
         ).set_thumbnail(
             url=
             'https://lh3.googleusercontent.com/proxy/FvYtnlrHTrrcmQiZuvp3lLqyODoJdEzi2-j_TBUVssLXgzaLRHmFQ8ZvxDSIvT3brHbU4qA0NBC2hW7zCnjNiG5BlAaLhJKtBJpeWdHZmKM'

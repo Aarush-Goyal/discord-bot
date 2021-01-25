@@ -50,7 +50,7 @@ async def on_raw_reaction_add(payload):
 
 #CRONs
 #called_once_a_week_gbu.start()
-# called_once_a_week_gm_poll.start()
+called_once_a_week_gm_poll.start()
 # called_once_a_week_gm_assign.start()
 
 #BOT
