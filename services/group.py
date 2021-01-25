@@ -110,8 +110,9 @@ class GroupMeet:
     async def post_groups_to_channel(self):
         headers = {}
 
-        groups_list = await send_request(method_type="GET", url="/groupcalls", headers=headers)
+        groups_list = await send_request(method_type="GET", url="/groupcalls/", headers=headers)
         groups_list= groups_list.json()
+        print(groups_list)
         if not groups_list:
             return
 
@@ -151,7 +152,7 @@ gm = GroupMeet(client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 
 
 # GM_POLL
-@tasks.loop(hours=168.0)
+@tasks.loop(hours=0.02)
 async def called_once_a_week_gm_poll():
     global gm
     await gm.send_message()
@@ -162,11 +163,13 @@ async def before_gm():
     await client.wait_until_ready()
     seconds_left = get_seconds_till_weekday(constants.GROUPMEET_POLL_WEEKDAY,
                                             constants.GROUPMEET_POLL_TIME)
+    print(seconds_left)                                        
     await asyncio.sleep(seconds_left)
+    
 
 
 # GM_ASSIGN
-@tasks.loop(hours=168.0)
+@tasks.loop(hours=0.02)
 async def called_once_a_week_gm_assign():
     global gm, is_active
     await gm.post_groups_to_channel()
@@ -180,4 +183,5 @@ async def before():
     seconds_left = get_seconds_till_weekday(
         constants.GROUPMEET_GROUP_ASSIGN_WEEKDAY,
         constants.GROUPMEET_GROUP_ASSIGN_TIME)
+    print(seconds_left)     
     await asyncio.sleep(seconds_left)

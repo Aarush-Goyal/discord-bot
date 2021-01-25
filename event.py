@@ -1,6 +1,6 @@
 from utils import not_recognized
 from services.user import get_user_email_and_id, submit_user_details
-from services.content import fetch, mark_ques_status, get_leaderboard
+from services.content import fetch, mark_ques_status, get_leaderboard, check_channel_ask_a_bot
 from services.mmt import assign_mentors_to_all
 from services.report import get_report_from_db, show_user_report, calc_days
 import discord
@@ -46,36 +46,42 @@ async def on_user_message(message):
             print('sending')
 
     if message.content.startswith('dn-fetch'):
-        response = await fetch(message.author, message)
+        if await check_channel_ask_a_bot(message):
+            response = await fetch(message.author, message)
 
     if message.content.startswith('dn-mark-done'):
-        response = await mark_ques_status(message.author, message, 0)
+        if await check_channel_ask_a_bot(message):
+            response = await mark_ques_status(message.author, message, 0)
 
-        if not response:
-            await not_recognized(message.author, 'dn-help')
+            if not response:
+                await not_recognized(message.author, 'dn-help')
 
 
 
     if message.content.startswith('dn-mark-undone'):
-        response = await mark_ques_status(message.author, message, 1)
+        if await check_channel_ask_a_bot(message):
+            response = await mark_ques_status(message.author, message, 1)
 
-        if not response:
-            await not_recognized(message.author, 'dn-help')
+            if not response:
+                await not_recognized(message.author, 'dn-help')
 
 
     if message.content.startswith('dn-mark-doubt'):
-        response = await mark_ques_status(message.author, message, 2)
+        if await check_channel_ask_a_bot(message):
+            response = await mark_ques_status(message.author, message, 2)
 
-        if not response:
-            await not_recognized(message.author, 'dn-help')
+            if not response:
+                await not_recognized(message.author, 'dn-help')
 
     if message.content.startswith('dn-report'):
-        days = await calc_days(message)
-        resp = await get_report_from_db(message, days)
-        await show_user_report(resp, message, days)
+        if await check_channel_ask_a_bot(message):
+            days = await calc_days(message)
+            resp = await get_report_from_db(message, days)
+            await show_user_report(resp, message, days)
 
     if message.content.startswith('dn-leaderboard'):
-        leaderboard = await get_leaderboard(message)
-        if not leaderboard:
-            await not_recognized(message.author,'dn-help')
+        if await check_channel_ask_a_bot(message):
+            leaderboard = await get_leaderboard(message)
+            if not leaderboard:
+                await not_recognized(message.author,'dn-help')
 

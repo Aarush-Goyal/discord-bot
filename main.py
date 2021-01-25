@@ -16,7 +16,7 @@ load_dotenv()
 async def on_ready():
     print('Logged in as', client.user.name, client.user.id)
     print('------')
-    #gm.accepted_user_list=[798238857178382379,759093668841259018]
+    # gm.accepted_user_list=[798238857178382379,751441607043317771]
     #await gm.send_message()
 
 
@@ -50,8 +50,8 @@ async def on_raw_reaction_add(payload):
 
 #CRONs
 #called_once_a_week_gbu.start()
-called_once_a_week_gm_poll.start()
-called_once_a_week_gm_assign.start()
+# called_once_a_week_gm_poll.start()
+# called_once_a_week_gm_assign.start()
 
 #BOT
 client.run(os.getenv('TOKEN'))

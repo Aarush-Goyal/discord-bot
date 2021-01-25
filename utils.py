@@ -68,4 +68,6 @@ async def not_recognized(user,correct_command):
 
 async def send_request(method_type, url, headers, data=None):
     url = BASE_URL + url
-    return requests.request(method_type, url, headers=headers, json=data)
+   
+    response = requests.request(method_type, url, headers=headers, json=data)
+    return response

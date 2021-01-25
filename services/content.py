@@ -269,3 +269,21 @@ async def get_leaderboard(message):
     
     await message.channel.send(embed=embed)
     return True
+
+async def wrong_channel_prompt(desc):
+  return discord.Embed(
+        title='Oooooops! Seems like a Wrong channel :(',
+        description= desc,
+    ).set_thumbnail(
+            url = 'https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif'
+        )
+
+
+async def check_channel_ask_a_bot(message):
+  ch = message.channel
+  if ch.id != int(os.environ['ASK_A_BOT']) and ch.guild != None:
+    prompt = await wrong_channel_prompt("Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! ")
+    await ch.send(embed= prompt)
+    return False
+  else:
+    return True
