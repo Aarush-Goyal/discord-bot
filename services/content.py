@@ -6,8 +6,6 @@ from utils import take_input_dm, send_request
 from dotenv import load_dotenv
 
 load_dotenv()
-BASE_URL = os.getenv('BASE_URL') + '/api/v1/contents'
-
 
 def extract_content(sample):
     content = []
@@ -40,7 +38,7 @@ def embed_content(embed, content):
             value = '[{0}]({0})'.format(content[i]['link'])
 
         if content[i]['name']:
-            name ='`' + content[i]['unique_id'].capitalize() + '`  ' + content[i]['name'].capitalize()
+            name='`' + content[i]['unique_id'].capitalize() + '`  ' + content[i]['name'].capitalize()
         else:
             name='`' + content[i]['unique_id'].capitalize() + '`'
 
@@ -78,12 +76,8 @@ async def prompt_and_check(user, embed, content, input=True):
     return user_input
 
 
-async def fetch_content(user, unique_id):
-    res = requests.get(BASE_URL+'?filter[parent_id]=' + unique_id)
-
-    print(BASE_URL + '?filter[parent_id]=' + unique_id)
-    url = BASE_URL + '?filter[parent_id]=' + unique_id
-    res = {}
+async def fetch_content(unique_id, ch):
+    url = os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=' + unique_id
 
     embed = discord.Embed(
         title= unique_id + ' Questions 💻',
@@ -103,16 +97,18 @@ async def fetch_content(user, unique_id):
         if not content:
             return False
 
-        await prompt_and_check(user, embed, content, False)
+        embed = embed_content(embed, content)
+        await ch.send(embed=embed)
 
     return True
 
 
-async def fetch(user, command):
-    command = command.content.split(' ')
+async def fetch(message):
+    ch = message.channel
+    command = message.content.split(' ')
 
     if len(command) > 1:
-        return await fetch_content(user, command[1])
+        return await fetch_content(command[1], ch)
 
     embed = discord.Embed(
         title='Topics 💻',
@@ -122,30 +118,15 @@ async def fetch(user, command):
     payload = {}
     headers = {}
 
-    # BASE_URL= 'http://127.0.0.1:3000/api/v1/contents'
-    response = requests.request("GET", BASE_URL + '?filter[parent_id]=algo', headers=headers, data=payload)
+    response = requests.request("GET", os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=algo', headers=headers, data=payload)
     data = response.json()
 
     curriculums = extract_content(data)
     if not curriculums:
         return False
-    
-    user_input = await prompt_and_check(user, embed, curriculums)
-    if not user_input:
-        return False
-   
-    url = BASE_URL + '?filter[parent_id]=' + user_input.content
-    response = requests.request("GET", url, headers=headers, data=payload)
-    data = response.json()
-    
-    subtopics = extract_content(data)
 
-    if not subtopics:
-        return False
-
-    user_input = await prompt_and_check(user, embed, subtopics)
-    if not user_input:
-        return False
+    embed = embed_content(embed, curriculums)
+    await ch.send(embed=embed)
 
     return True
 
@@ -153,7 +134,7 @@ async def fetch(user, command):
 async def send_done_in_channel(user, unique_id):
 
     # TODO Uncommnent
-    res=requests.get( BASE_URL + '?filter[unique_id]=' + unique_id)
+    res=requests.get( os.getenv('BASE_URL') + '/api/v1/contents?filter[unique_id]=' + unique_id)
     res=res.json()
     print(res)
 
@@ -281,7 +262,7 @@ async def wrong_channel_prompt(desc):
 
 async def check_channel_ask_a_bot(message):
   ch = message.channel
-  if ch.id != int(os.environ['ASK_A_BOT']) and ch.guild != None:
+  if ch.id != int(os.environ['ASK_A_BOT']) and type(ch).__name__ != 'DMChannel':
     prompt = await wrong_channel_prompt("Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! ")
     await ch.send(embed= prompt)
     return False

@@ -47,7 +47,7 @@ async def on_user_message(message):
 
     if message.content.startswith('dn-fetch'):
         if await check_channel_ask_a_bot(message):
-            response = await fetch(message.author, message)
+            response = await fetch(message)
 
     if message.content.startswith('dn-mark-done'):
         # if await check_channel_ask_a_bot(message):

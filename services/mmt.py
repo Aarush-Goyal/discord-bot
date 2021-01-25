@@ -34,9 +34,6 @@ async def assign_mentors_to_all(member):
 
     await user.send( embed= user_prompt)
     await mentor.send( embed= mentor_prompt)
-    # await user.send(user_msg)
-    # await mentor.send(mentor_msg)	
-
 
 
 async def assign_mentor_to_new_user(resp):
@@ -55,7 +52,3 @@ async def assign_mentor_to_new_user(resp):
 
   await user.send( embed= user_prompt)
   await mentor.send( embed= mentor_prompt)
-
-  # await user.send(user_msg)
-  # await mentor.send(mentor_msg)
-
