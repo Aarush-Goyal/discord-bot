@@ -4,7 +4,7 @@ from services.gbu import called_once_a_week_gbu
 from client import client
 from event import on_user_message
 from services.user import new_member_joined
-from services.mmt import assign_mentor_to_new_user
+from services.mmt import assign_mentor_to_new_user, called_once_a_week_mmt
 from services.group import called_once_a_week_gm_poll, called_once_a_week_gm_assign, is_active, gm
 from dotenv import load_dotenv
 
@@ -49,9 +49,10 @@ async def on_raw_reaction_add(payload):
 
 
 #CRONs
-#called_once_a_week_gbu.start()
-called_once_a_week_gm_poll.start()
+# called_once_a_week_gbu.start()
+# called_once_a_week_gm_poll.start()
 # called_once_a_week_gm_assign.start()
+# called_once_a_week_mmt.start()
 
 #BOT
-client.run(os.getenv('TOKEN'))
+client.run(os.getenv('BOT_TOKEN'))

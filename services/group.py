@@ -31,7 +31,7 @@ class GroupMeet:
         return discord.Embed(
             title='Group Meet ', description=self.description
         ).set_thumbnail(
-            url='src="https://media1.giphy.com/media/26uf8hTvzYZ6OQc3m/giphy.gif?cid=ecf05e479bc4c21d9607663f14dfafd69f4744e94e9ccc9d&rid=giphy.gif"'
+            url='https://media.tenor.com/images/5155ecadbe64a1c5c13d363ed22ce84d/tenor.gif'
         )
 
     def _add_reaction_fields(self):
@@ -55,7 +55,6 @@ class GroupMeet:
         global is_active
         if is_active and payload.message_id == self.reaction_message.id and payload.member.bot == False:
             if payload.emoji.name == "👍":
-                print("added")
                 await self.add_users_to_db(payload.user_id, 1)
                 if payload.user_id not in self.accepted_user_list:
                     self.accepted_user_list.append(payload.user_id)
@@ -67,7 +66,6 @@ class GroupMeet:
                     pass
 
             elif payload.emoji.name == "👎":
-                print("removed")
                 await self.add_users_to_db(payload.user_id, 0)
                 if payload.user_id not in self.rejected_user_list:
                     self.rejected_user_list.append(payload.user_id)
@@ -94,7 +92,10 @@ class GroupMeet:
             await self.reaction_message.edit(embed=self.prompt)
 
     async def add_users_to_db(self, user_id, choice):
-        headers = {'Content-Type': 'application/json'}
+        headers = {'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+            'Host': os.getenv('HOST')
+        }
 
         payload = {
             "data": {
@@ -108,11 +109,14 @@ class GroupMeet:
 
 
     async def post_groups_to_channel(self):
-        headers = {}
+        headers = {
+            'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+            'Host': os.getenv('HOST')
+        }
 
         groups_list = await send_request(method_type="GET", url="/groupcalls/", headers=headers)
         groups_list= groups_list.json()
-        print(groups_list)
+
         if not groups_list:
             return
 
@@ -123,7 +127,7 @@ class GroupMeet:
                 groups[idx] = []
             for user in data:
                 groups[idx].append(int(user["discord_id"]))
-        print(groups)
+
         getMentionStr = lambda x: f"<@{str(x)}>"
         getAssignedGroupPromptDescription = lambda \
             grp: f"**Group Lead**: {getMentionStr(grp[0])}\n" + "**Members**: " + " ".join(
@@ -131,17 +135,16 @@ class GroupMeet:
 
 
         prompt = discord.Embed(
-            title='Assigned Groups',
+            title='Group Meet Assigned Groups',
             description=
-            "Pls, find your respected groups for this week's Group Meeting. \n The group meeting is scheduled at 9 pm tonight"
+            "Pls, find your respected groups for this week's Group Meeting. \n \n The group meeting is scheduled at 9 pm tonight. Group leaders are required to moderate it."
         ).set_thumbnail(
-            url=
-            'https://lh3.googleusercontent.com/proxy/FvYtnlrHTrrcmQiZuvp3lLqyODoJdEzi2-j_TBUVssLXgzaLRHmFQ8ZvxDSIvT3brHbU4qA0NBC2hW7zCnjNiG5BlAaLhJKtBJpeWdHZmKM'
+            url='https://media1.giphy.com/media/VEhMiI26CCXVK6mixx/giphy.gif'
         )
         for idx, grp in enumerate(groups.values()):
             prompt.add_field(
                 name=
-                f"-------------------'Group-{str(idx + 1).zfill(2)}'-------------------",
+                f"-------------------'Group-{str(idx + 1).zfill(2)}'-------------------\n \n",
                 value=getAssignedGroupPromptDescription(grp),
                 inline=False)
 
@@ -152,7 +155,7 @@ gm = GroupMeet(client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 
 
 # GM_POLL
-@tasks.loop(hours=0.02)
+@tasks.loop(hours=168.00)
 async def called_once_a_week_gm_poll():
     global gm
     await gm.send_message()
@@ -162,14 +165,13 @@ async def called_once_a_week_gm_poll():
 async def before_gm():
     await client.wait_until_ready()
     seconds_left = get_seconds_till_weekday(constants.GROUPMEET_POLL_WEEKDAY,
-                                            constants.GROUPMEET_POLL_TIME)
-    print(seconds_left)                                        
+                                            constants.GROUPMEET_POLL_TIME)                                     
     await asyncio.sleep(seconds_left)
     
 
 
 # GM_ASSIGN
-@tasks.loop(hours=0.02)
+@tasks.loop(hours=168.00)
 async def called_once_a_week_gm_assign():
     global gm, is_active
     await gm.post_groups_to_channel()
@@ -182,6 +184,5 @@ async def before():
     await client.wait_until_ready()
     seconds_left = get_seconds_till_weekday(
         constants.GROUPMEET_GROUP_ASSIGN_WEEKDAY,
-        constants.GROUPMEET_GROUP_ASSIGN_TIME)
-    print(seconds_left)     
+        constants.GROUPMEET_GROUP_ASSIGN_TIME)   
     await asyncio.sleep(seconds_left)

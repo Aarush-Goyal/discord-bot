@@ -1,8 +1,12 @@
 import discord
 import requests
 import os
+import asyncio
 from client import client
+import constants
 from dotenv import load_dotenv
+from discord.ext import tasks
+from utils import get_seconds_till_weekday
 import discord
 load_dotenv()
 
@@ -14,9 +18,13 @@ def get_basic_prompt(desc):
         )
 
 
-async def assign_mentors_to_all(member):
+async def assign_mentors_to_all():
+  headers = {
+      'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+      'Host': os.getenv('HOST')
+  }
   
-  resp = requests.get(os.getenv('BASE_URL') + '/api/v1/mmts')
+  resp = requests.get(os.getenv('BASE_URL') + '/api/v1/mmts', headers=headers)
   resp = resp.json()
   mentors_data = resp["data"]
         
@@ -37,7 +45,6 @@ async def assign_mentors_to_all(member):
 
 
 async def assign_mentor_to_new_user(resp):
-  print(resp)
   user_discord_id = resp["data"]["attributes"]["discord_id"]
   mentor_discord_id = resp["data"]["attributes"]["mentor_discord_id"]
   
@@ -52,3 +59,15 @@ async def assign_mentor_to_new_user(resp):
 
   await user.send( embed= user_prompt)
   await mentor.send( embed= mentor_prompt)
+
+
+
+@tasks.loop(hours=168.0)  # 168 hours in a week
+async def called_once_a_week_mmt():
+    await assign_mentors_to_all()
+
+@called_once_a_week_mmt.before_loop
+async def before():
+    await client.wait_until_ready()
+    seconds_left = get_seconds_till_weekday(constants.MMT_WEEKDAY, constants.MMT_TIME)
+    await asyncio.sleep(seconds_left)

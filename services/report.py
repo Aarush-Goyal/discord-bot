@@ -20,7 +20,9 @@ async def calc_days(message):
 async def get_report_from_db(message, days):
     url = os.getenv('BASE_URL') + '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=' + str(days) 
     headers = {
-        'Content-Type': 'application/vnd.api+json'
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
     }
 
     resp = requests.request("GET", url, headers=headers)

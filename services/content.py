@@ -85,7 +85,10 @@ async def fetch_content(unique_id, ch):
     )
 
     payload = {}
-    headers = {}
+    headers = {
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
+    }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
 
@@ -116,7 +119,10 @@ async def fetch(message):
     )
 
     payload = {}
-    headers = {}
+    headers = {
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
+    }
 
     response = requests.request("GET", os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=algo', headers=headers, data=payload)
     data = response.json()
@@ -134,9 +140,13 @@ async def fetch(message):
 async def send_done_in_channel(user, unique_id):
 
     # TODO Uncommnent
-    res=requests.get( os.getenv('BASE_URL') + '/api/v1/contents?filter[unique_id]=' + unique_id)
+    headers = {
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
+    }
+    
+    res=requests.get( os.getenv('BASE_URL') + '/api/v1/contents?filter[unique_id]=' + unique_id, headers=headers)
     res=res.json()
-    print(res)
 
     try:
         question_name = res['data'][0]['attributes']['name']
@@ -161,13 +171,14 @@ async def send_done_in_channel(user, unique_id):
 
     embed.set_thumbnail(url=confetti_png)
 
-    ch = client.get_channel(int(os.getenv('GROUPMEET_CHANNEL')))
+    ch = client.get_channel(int(os.getenv('STATUS_CHANNEL')))
 
     await ch.send(embed=embed)
 
 
 async def mark_ques_status(user, command, status):
-    unique_id = command.content.split(' ')[1]
+    ch = command.channel
+    unique_id=command.content.split(' ')[1]
     res = await update_submissions(user, unique_id, status)
 
     if status == 0:
@@ -187,20 +198,20 @@ async def mark_ques_status(user, command, status):
     else:
         content = extract_content(res)
         if not content:
-            await user.send(embed=embed)
+            await ch.send(embed=embed)
 
             if status == 0:
                 await send_done_in_channel(user, unique_id)
             return True
-
         await prompt_and_check(user, embed, content, False)
-
 
 async def update_submissions(user, unique_id, status):
     id = user.id
     url = os.getenv('BASE_URL') + '/api/v1/submissions'
     headers = {
-        'Content-Type': 'application/vnd.api+json'
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
     }
 
     myobj = {
@@ -225,6 +236,8 @@ def embed_leaderboard(embed, leaderboard):
 
         name = leaderboard[i]['name'].capitalize()
         score = leaderboard[i]['score']
+        if score==None:
+            score='zero'
 
         embed.add_field(
             name=name,
@@ -236,7 +249,10 @@ def embed_leaderboard(embed, leaderboard):
 
 
 async def get_leaderboard(message):
-    headers = {'Content-Type': 'application/json'}
+    headers = {'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
+        'Host': os.getenv('HOST')
+    }
     url = os.getenv('BASE_URL')+'/api/v1/users/leaderboard'
     response = requests.request("GET", url, headers=headers)
 

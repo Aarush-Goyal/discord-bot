@@ -21,8 +21,8 @@ def get_prompt_help():
 
 
 async def on_user_message(message):
-    if message.content.startswith('dn-assign-mentors'):
-        await assign_mentors_to_all(message)
+    # if message.content.startswith('dn-assign-mentors'):
+    #     await assign_mentors_to_all()
 
     if message.content.startswith('dn-hello'):
         msg = 'hello {0.author.mention}'.format(message)
@@ -43,14 +43,13 @@ async def on_user_message(message):
         user_email = await get_user_email_and_id(message.author)
         if user_email:
             await submit_user_details(user_email, message.author)
-            print('sending')
 
     if message.content.startswith('dn-fetch'):
         if await check_channel_ask_a_bot(message):
             response = await fetch(message)
 
     if message.content.startswith('dn-mark-done'):
-        # if await check_channel_ask_a_bot(message):
+        if await check_channel_ask_a_bot(message):
             response = await mark_ques_status(message.author, message, 0)
 
             if not response:

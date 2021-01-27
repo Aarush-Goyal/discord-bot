@@ -54,13 +54,11 @@ async def get_user_gbu(message_channel, member):
       gbn_prompt.add_field(name="Plan for next week : ", value= plan.content,inline=False)
 
       await message_channel.send(embed= gbn_prompt)
-      print('sending')
 
 
 @tasks.loop(hours=168.0)  # 168 hours in a week
 async def called_once_a_week_gbu():
     message_channel = client.get_channel(int(os.environ['GBU_CHANNEL']))
-    print(f"Got channel {message_channel}")
     tasks = []
 
     loop = asyncio.get_event_loop()
@@ -75,4 +73,4 @@ async def called_once_a_week_gbu():
 async def before_gbu():
     await client.wait_until_ready()
     seconds_left = get_seconds_till_weekday(constants.GBU_WEEKDAY, constants.GBU_TIME)
-    await asyncio.sleep(0)
+    await asyncio.sleep(seconds_left)
