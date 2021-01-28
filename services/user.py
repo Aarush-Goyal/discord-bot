@@ -70,8 +70,7 @@ async def submit_user_details(user_email, member):
     url = os.getenv('BASE_URL') + '/api/v1/users'
     headers = {
         'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
     myobj = {
         "data": {

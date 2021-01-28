@@ -7,9 +7,10 @@ import asyncio
 from client import client
 import requests
 import os
+from dotenv import load_dotenv
 
 # Timezone
-BASE_URL = "http://localhost:3000" + '/api/v1'
+BASE_URL = os.getenv('BASE_URL') + '/api/v1'
 
 IST = pytz.timezone('Asia/Kolkata')
 

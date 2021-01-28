@@ -93,8 +93,7 @@ class GroupMeet:
 
     async def add_users_to_db(self, user_id, choice):
         headers = {'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-            'Host': os.getenv('HOST')
+            'Authorization': 'Bearer '+ os.getenv('TOKEN')
         }
 
         payload = {
@@ -110,8 +109,7 @@ class GroupMeet:
 
     async def post_groups_to_channel(self):
         headers = {
-            'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-            'Host': os.getenv('HOST')
+            'Authorization': 'Bearer '+ os.getenv('TOKEN')
         }
 
         groups_list = await send_request(method_type="GET", url="/groupcalls/", headers=headers)

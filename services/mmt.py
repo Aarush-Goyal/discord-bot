@@ -20,8 +20,7 @@ def get_basic_prompt(desc):
 
 async def assign_mentors_to_all():
   headers = {
-      'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-      'Host': os.getenv('HOST')
+      'Authorization': 'Bearer '+ os.getenv('TOKEN')
   }
   
   resp = requests.get(os.getenv('BASE_URL') + '/api/v1/mmts', headers=headers)
