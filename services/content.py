@@ -86,8 +86,7 @@ async def fetch_content(unique_id, ch):
 
     payload = {}
     headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
@@ -120,8 +119,7 @@ async def fetch(message):
 
     payload = {}
     headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
 
     response = requests.request("GET", os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=algo', headers=headers, data=payload)
@@ -141,8 +139,7 @@ async def send_done_in_channel(user, unique_id):
 
     # TODO Uncommnent
     headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
     
     res=requests.get( os.getenv('BASE_URL') + '/api/v1/contents?filter[unique_id]=' + unique_id, headers=headers)
@@ -210,8 +207,7 @@ async def update_submissions(user, unique_id, status):
     url = os.getenv('BASE_URL') + '/api/v1/submissions'
     headers = {
         'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
 
     myobj = {
@@ -250,8 +246,7 @@ def embed_leaderboard(embed, leaderboard):
 
 async def get_leaderboard(message):
     headers = {'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN'),
-        'Host': os.getenv('HOST')
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
     url = os.getenv('BASE_URL')+'/api/v1/users/leaderboard'
     response = requests.request("GET", url, headers=headers)
