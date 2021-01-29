@@ -1,7 +1,7 @@
 import discord
 import os
 import asyncio
-import  requests
+import requests
 import constants
 from client import client
 from discord.ext import tasks
@@ -92,9 +92,6 @@ class GroupMeet:
             await self.reaction_message.edit(embed=self.prompt)
 
     async def add_users_to_db(self, user_id, choice):
-        headers = {'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ os.getenv('TOKEN')
-        }
 
         payload = {
             "data": {
@@ -104,18 +101,17 @@ class GroupMeet:
                 }
             }
         }
-        await send_request(method_type="POST", url="/groupcalls/", headers=headers, data=payload)
+        await send_request(method_type="POST", url="api/v1/groupcalls/", data=payload)
 
 
     async def post_groups_to_channel(self):
-        headers = {
-            'Authorization': 'Bearer '+ os.getenv('TOKEN')
-        }
 
-        groups_list = await send_request(method_type="GET", url="/groupcalls/", headers=headers)
+        groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
         groups_list= groups_list.json()
+        print(groups_list)
 
         if not groups_list:
+            print("empty")
             return
 
         groups = {}

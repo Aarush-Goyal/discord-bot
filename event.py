@@ -21,8 +21,8 @@ def get_prompt_help():
 
 
 async def on_user_message(message):
-    # if message.content.startswith('dn-assign-mentors'):
-    #     await assign_mentors_to_all()
+    if message.content.startswith('dn-assign-mentors'):
+        await assign_mentors_to_all()
 
     if message.content.startswith('dn-hello'):
         msg = 'hello {0.author.mention}'.format(message)
@@ -84,3 +84,5 @@ async def on_user_message(message):
             if not leaderboard:
                 await not_recognized(message.author,'dn-help')
 
+    if message.content.startswith('dn'):
+        await not_recognized(message.author,'dn-help')

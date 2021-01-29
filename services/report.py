@@ -4,6 +4,7 @@ import os
 import asyncio
 import requests
 from client import client
+from utils import get_seconds_till_weekday, send_request
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -18,13 +19,9 @@ async def calc_days(message):
 
 
 async def get_report_from_db(message, days):
-    url = os.getenv('BASE_URL') + '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=' + str(days) 
-    headers = {
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
+    url = '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=' + str(days) 
 
-    resp = requests.request("GET", url, headers=headers)
+    resp = await send_request(method_type="GET", url=url)
     resp = resp.json()
     return resp
 
@@ -51,9 +48,9 @@ async def show_user_report(resp, message, days):
 
 
     if len(resp)>0:
-      for topic,cnt in resp.items():
-        report+= "\n" + '`' + topic.capitalize() + '`' + "  :  " + str(cnt)
+        for topic,cnt in resp.items():
+            report+= "\n" + '`' + topic.capitalize() + '`' + "  :  " + str(cnt)
 
-    prompt.add_field(name="Question solved per topic: ", value= report,inline=False)
+        prompt.add_field(name="Question solved per topic: ", value= report,inline=False)
 
     await message.channel.send(embed= prompt)
