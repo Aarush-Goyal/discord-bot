@@ -6,7 +6,7 @@ from client import client
 import constants
 from dotenv import load_dotenv
 from discord.ext import tasks
-from utils import get_seconds_till_weekday
+from utils import get_seconds_till_weekday, send_request
 import discord
 load_dotenv()
 
@@ -19,11 +19,8 @@ def get_basic_prompt(desc):
 
 
 async def assign_mentors_to_all():
-  headers = {
-      'Authorization': 'Bearer '+ os.getenv('TOKEN')
-  }
-  
-  resp = requests.get(os.getenv('BASE_URL') + '/api/v1/mmts', headers=headers)
+
+  resp = await send_request(method_type="GET", url="/api/v1/mmts")
   resp = resp.json()
   mentors_data = resp["data"]
         

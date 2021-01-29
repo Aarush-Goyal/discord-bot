@@ -2,7 +2,7 @@ import discord
 import requests
 import os
 from client import client
-from utils import take_input_dm, send_request
+from utils import take_input_dm, send_request, data_not_found
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -77,7 +77,7 @@ async def prompt_and_check(user, embed, content, input=True):
 
 
 async def fetch_content(unique_id, ch):
-    url = os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=' + unique_id
+    url = '/api/v1/contents?filter[parent_id]=' + unique_id
 
     embed = discord.Embed(
         title= unique_id + ' Questions 💻',
@@ -85,16 +85,15 @@ async def fetch_content(unique_id, ch):
     )
 
     payload = {}
-    headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
-    response = requests.request("GET", url, headers=headers, data=payload)
-    data = response.json()
 
-    if not response.status_code == 200:
+    response = await send_request(method_type="GET", url=url, data=payload)
+    resp = response.json()
+
+    if len(resp["data"])==0:
+        await data_not_found(ch, "Invalid topic name!")
         return False
     else:
-        content = extract_content(data)
+        content = extract_content(resp)
 
         if not content:
             return False
@@ -118,15 +117,17 @@ async def fetch(message):
     )
 
     payload = {}
-    headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
 
-    response = requests.request("GET", os.getenv('BASE_URL') + '/api/v1/contents?filter[parent_id]=algo', headers=headers, data=payload)
-    data = response.json()
+    response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+    resp = response.json()
+    
+    if len(resp["data"])==0:
+        await data_not_found(ch, "No topics present !")
+        return False
 
-    curriculums = extract_content(data)
+    curriculums = extract_content(resp)
     if not curriculums:
+        await data_not_found(ch, "No topics present !")
         return False
 
     embed = embed_content(embed, curriculums)
@@ -136,14 +137,14 @@ async def fetch(message):
 
 
 async def send_done_in_channel(user, unique_id):
+    ch = client.get_channel(int(os.getenv('STATUS_CHANNEL')))
 
-    # TODO Uncommnent
-    headers = {
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
-    
-    res=requests.get( os.getenv('BASE_URL') + '/api/v1/contents?filter[unique_id]=' + unique_id, headers=headers)
+    url = '/api/v1/contents?filter[unique_id]=' + unique_id  
+    res = await send_request(method_type="GET", url= url)
     res=res.json()
+    
+    # Error in sending data to channel
+    # if len(res["data"])==0:
 
     try:
         question_name = res['data'][0]['attributes']['name']
@@ -168,8 +169,6 @@ async def send_done_in_channel(user, unique_id):
 
     embed.set_thumbnail(url=confetti_png)
 
-    ch = client.get_channel(int(os.getenv('STATUS_CHANNEL')))
-
     await ch.send(embed=embed)
 
 
@@ -177,6 +176,7 @@ async def mark_ques_status(user, command, status):
     ch = command.channel
     unique_id=command.content.split(' ')[1]
     res = await update_submissions(user, unique_id, status)
+    res = res.json()
 
     if status == 0:
         desc = "Congratulations‼ \n This question has been marked as done. Keep Going 😄"
@@ -189,8 +189,8 @@ async def mark_ques_status(user, command, status):
         description=desc,
     )
 
-    if not res.status_code == 200:
-        return False
+    if not res["data"]["id"]:
+        await data_not_found(ch, "Invalid question id, Please enter correct one!")
 
     else:
         content = extract_content(res)
@@ -202,15 +202,12 @@ async def mark_ques_status(user, command, status):
             return True
         await prompt_and_check(user, embed, content, False)
 
+
 async def update_submissions(user, unique_id, status):
     id = user.id
-    url = os.getenv('BASE_URL') + '/api/v1/submissions'
-    headers = {
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
+    url = '/api/v1/submissions'
 
-    myobj = {
+    payload = {
         "data": {
             "attributes": {
                 "discord_id": id,
@@ -220,10 +217,10 @@ async def update_submissions(user, unique_id, status):
             "type": "submissions"
         }
     }
-    # get response
-    res = requests.request("POST", url, headers=headers, json=myobj)
-   
+
+    res = await send_request(method_type="POST", url=url, data=payload)
     return res
+
 
 def embed_leaderboard(embed, leaderboard):
     embed.clear_fields()
@@ -245,13 +242,14 @@ def embed_leaderboard(embed, leaderboard):
 
 
 async def get_leaderboard(message):
-    headers = {'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
-    url = os.getenv('BASE_URL')+'/api/v1/users/leaderboard'
-    response = requests.request("GET", url, headers=headers)
 
-    res = response.json()
+    url = 'api/v1/users/leaderboard'
+    res = await send_request(method_type="GET", url=url)
+    res = res.json()
+
+    if res == []:
+        await data_not_found(message.channel, "Insufficient data to create leaderboard !")
+        return False
     
     embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
     embed = embed_leaderboard(embed, res)

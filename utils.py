@@ -8,9 +8,7 @@ from client import client
 import requests
 import os
 from dotenv import load_dotenv
-
-# Timezone
-BASE_URL = os.getenv('BASE_URL') + '/api/v1'
+load_dotenv()
 
 IST = pytz.timezone('Asia/Kolkata')
 
@@ -59,6 +57,15 @@ async def take_input_dm(user):
     
     return user_input
 
+
+async def data_not_found(ch, title="Sorry, Invalid parameters has been passed"):
+    embed=discord.Embed(
+      title= title,
+      description= 'Use `dn-help` to explore more and continue learning !'
+    )
+    await ch.send(embed=embed)
+
+
 async def not_recognized(user,correct_command):
     embed=discord.Embed(
       title='Sorry, couldn\'t recognize that command.',
@@ -67,8 +74,14 @@ async def not_recognized(user,correct_command):
     await user.send(embed=embed)
 
 
-async def send_request(method_type, url, headers, data=None):
-    url = BASE_URL + url
+async def send_request(method_type, url, data=None):
+    url = os.getenv('BASE_URL') + url
+
+    headers = {
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer '+ os.getenv('TOKEN')
+    }
    
     response = requests.request(method_type, url, headers=headers, json=data)
+    print(response.json())
     return response

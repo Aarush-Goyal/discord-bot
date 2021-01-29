@@ -5,6 +5,7 @@ import asyncio
 import requests
 from client import client
 from dotenv import load_dotenv
+from utils import get_seconds_till_weekday, send_request
 load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
@@ -68,10 +69,6 @@ async def get_user_email_and_id(user):
 async def submit_user_details(user_email, member):
 
     url = os.getenv('BASE_URL') + '/api/v1/users'
-    headers = {
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer '+ os.getenv('TOKEN')
-    }
     myobj = {
         "data": {
           "attributes":{
@@ -86,6 +83,6 @@ async def submit_user_details(user_email, member):
         }
     }
 
-    resp = requests.request("POST", url, headers=headers, json=myobj)
+    resp = await send_request(method_type="POST", url=url, data=myobj)
     resp = resp.json()
     return resp
