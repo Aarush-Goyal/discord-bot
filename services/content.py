@@ -90,9 +90,7 @@ async def fetch_content(unique_id, ch):
     resp = response.json()
 
     if len(resp["data"])==0:
-        await data_not_found(ch)
-
-    if not response.status_code == 200:
+        await data_not_found(ch, "Invalid topic name!")
         return False
     else:
         content = extract_content(resp)
@@ -124,12 +122,12 @@ async def fetch(message):
     resp = response.json()
     
     if len(resp["data"])==0:
-        await data_not_found(ch)
+        await data_not_found(ch, "No topics present !")
         return False
 
     curriculums = extract_content(resp)
     if not curriculums:
-        await data_not_found(ch)
+        await data_not_found(ch, "No topics present !")
         return False
 
     embed = embed_content(embed, curriculums)
@@ -178,6 +176,7 @@ async def mark_ques_status(user, command, status):
     ch = command.channel
     unique_id=command.content.split(' ')[1]
     res = await update_submissions(user, unique_id, status)
+    res = res.json()
 
     if status == 0:
         desc = "Congratulations‼ \n This question has been marked as done. Keep Going 😄"
@@ -190,11 +189,8 @@ async def mark_ques_status(user, command, status):
         description=desc,
     )
 
-    if not res.status_code == 200:
-        res = res.json()
-        if not res["data"]["id"]:
-            await data_not_found(ch, "Invalid question id, Please enter correct one!")
-        return False
+    if not res["data"]["id"]:
+        await data_not_found(ch, "Invalid question id, Please enter correct one!")
 
     else:
         content = extract_content(res)
@@ -247,8 +243,13 @@ def embed_leaderboard(embed, leaderboard):
 
 async def get_leaderboard(message):
 
-    url = '/api/v1/users/leaderboard'
+    url = 'api/v1/users/leaderboard'
     res = await send_request(method_type="GET", url=url)
+    res = res.json()
+
+    if res == []:
+        await data_not_found(message.channel, "Insufficient data to create leaderboard !")
+        return False
     
     embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
     embed = embed_leaderboard(embed, res)

@@ -58,10 +58,10 @@ async def take_input_dm(user):
     return user_input
 
 
-async def data_not_found(ch, title="Sorry, Invalid input has been passed"):
+async def data_not_found(ch, title="Sorry, Invalid parameters has been passed"):
     embed=discord.Embed(
       title= title,
-      description= 'You can use `dn-help` to get detail of commands'
+      description= 'Use `dn-help` to explore more and continue learning !'
     )
     await ch.send(embed=embed)
 

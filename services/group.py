@@ -5,7 +5,7 @@ import requests
 import constants
 from client import client
 from discord.ext import tasks
-from utils import get_seconds_till_weekday, send_request
+from utils import get_seconds_till_weekday, send_request, data_not_found
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -110,9 +110,10 @@ class GroupMeet:
         groups_list= groups_list.json()
         print(groups_list)
 
-        if not groups_list:
-            print("empty")
-            return
+        if groups_list == [[]]:
+            print(self.client.get_channel(int(self.channel_id)))
+            await data_not_found(self.client.get_channel(int(self.channel_id)), "No one accepted the group invite this week !")
+            return 
 
         groups = {}
         for idx,data in enumerate(groups_list):

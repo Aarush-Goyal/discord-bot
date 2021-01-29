@@ -4,15 +4,22 @@ import os
 import asyncio
 import requests
 from client import client
-from utils import get_seconds_till_weekday, send_request
+from utils import get_seconds_till_weekday, send_request, data_not_found
 from dotenv import load_dotenv
 load_dotenv()
 
 
 async def calc_days(message):
-    tmp = message.content.split(" ")
-    if len(tmp)>1:
-        days = tmp[1]
+    msg = message.content.split(" ")
+    if len(msg)>1:
+        try:
+            days = int
+            (msg[1])
+            if days<1:
+                raise Exception("Invalid no of days")
+        except:
+            await data_not_found(message.channel, "Please enter valid no. of day count")
+            return False
     else:
         days = 7
     return days
