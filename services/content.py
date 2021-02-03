@@ -1,5 +1,5 @@
 import discord
-import requests
+from logger import errorLogger, infoLogger
 import os
 from client import client
 from utils import take_input_dm, send_request, data_not_found
@@ -11,9 +11,7 @@ def extract_content(sample):
     content = []
     try:
         for _content in sample['data']:
-            temp = {}
-            temp['name'] = _content['attributes']['name']
-            temp['unique_id'] = _content['attributes']['unique_id']
+            temp = {'name': _content['attributes']['name'], 'unique_id': _content['attributes']['unique_id']}
             if not _content['attributes']['link'] == "null":
                 temp['link'] = _content['attributes']['link']
             else:
@@ -22,6 +20,7 @@ def extract_content(sample):
 
     except:
         #Cannot get curriculums
+        errorLogger.error('Cannot get curriculums')
         content = False
     return content
 
@@ -85,17 +84,27 @@ async def fetch_content(unique_id, ch):
     )
 
     payload = {}
+    try:
+        response = await send_request(method_type="GET", url=url, data=payload)
+    except ConnectionError as e:
+        errorLogger.error('Error while getting response', e)
 
-    response = await send_request(method_type="GET", url=url, data=payload)
+    if not response:
+        await data_not_found(ch, "Invalid topic name!")
+        errorLogger.error('Content not found')
+        return False
+
     resp = response.json()
 
     if len(resp["data"])==0:
         await data_not_found(ch, "Invalid topic name!")
+        errorLogger.error('Empty data field')
         return False
     else:
         content = extract_content(resp)
 
         if not content:
+            errorLogger.error('invalid content')
             return False
 
         embed = embed_content(embed, content)
@@ -118,20 +127,32 @@ async def fetch(message):
 
     payload = {}
 
-    response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+    try:
+        response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+    except ConnectionError as e:
+        errorLogger.error('Error while getting response',e)
+
+    if not response:
+        await data_not_found(ch, "No topics present !")
+        errorLogger.error('The request failed with an empty response')
+        return False
+
     resp = response.json()
-    
+
     if len(resp["data"])==0:
         await data_not_found(ch, "No topics present !")
+        errorLogger.error('The request failed with an empty data')
         return False
 
     curriculums = extract_content(resp)
     if not curriculums:
         await data_not_found(ch, "No topics present !")
+        errorLogger.error('No topics found while parsing curriculum')
         return False
 
     embed = embed_content(embed, curriculums)
     await ch.send(embed=embed)
+    infoLogger.info('Fetch Data: Embed sent to the channel')
 
     return True
 
@@ -150,7 +171,7 @@ async def send_done_in_channel(user, unique_id):
         question_name = res['data'][0]['attributes']['name']
         question_link = res['data'][0]['attributes']['link']
     except:
-        
+        errorLogger.error('Error while parsing data')
         return False
 
     embed = discord.Embed(
@@ -170,6 +191,7 @@ async def send_done_in_channel(user, unique_id):
     embed.set_thumbnail(url=confetti_png)
 
     await ch.send(embed=embed)
+    infoLogger.info('Question Status: Embed sent to the channel')
 
 
 async def mark_ques_status(user, command, status):
@@ -217,8 +239,12 @@ async def update_submissions(user, unique_id, status):
             "type": "submissions"
         }
     }
-
     res = await send_request(method_type="POST", url=url, data=payload)
+    if type(res)=='HTTPError':
+        print(1)
+        errorLogger.error('send_request: Error while getting the response', exc_info=res)
+        return res
+    infoLogger.info('send_request: data retrieved successfully')
     return res
 
 
@@ -244,13 +270,17 @@ def embed_leaderboard(embed, leaderboard):
 async def get_leaderboard(message):
 
     url = 'api/v1/users/leaderboard'
-    res = await send_request(method_type="GET", url=url)
-    res = res.json()
+    try:
+        res = await send_request(method_type="GET", url=url)
+    except ConnectionError as e:
+        errorLogger.error('Error while sending request', exc_info=e)
 
-    if res == []:
+    if not res:
         await data_not_found(message.channel, "Insufficient data to create leaderboard !")
         return False
-    
+
+    res = res.json()
+
     embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
     embed = embed_leaderboard(embed, res)
     

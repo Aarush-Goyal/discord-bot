@@ -7,6 +7,7 @@ from services.user import new_member_joined
 from services.mmt import assign_mentor_to_new_user, called_once_a_week_mmt
 from services.group import called_once_a_week_gm_poll, called_once_a_week_gm_assign, is_active, gm
 from dotenv import load_dotenv
+from llistMembers import listExixtingMembers
 
 
 load_dotenv()
@@ -16,8 +17,7 @@ load_dotenv()
 async def on_ready():
     print('Logged in as', client.user.name, client.user.id)
     print('------')
-    # gm.accepted_user_list=[798238857178382379,751441607043317771]
-    #await gm.send_message()
+    # await listExixtingMembers()
 
 
 @client.event
@@ -38,7 +38,6 @@ async def on_message(message):
 
 @client.event
 async def on_raw_reaction_add(payload):
-    #global gm, is_active
 
     if payload.channel_id == int(os.getenv('GROUPMEET_CHANNEL')):
         from services.group import gm, is_active
@@ -50,9 +49,9 @@ async def on_raw_reaction_add(payload):
 
 #CRONs
 # called_once_a_week_gbu.start()
-# called_once_a_week_gm_poll.start()
-# called_once_a_week_gm_assign.start()
-# called_once_a_week_mmt.start()
+called_once_a_week_gm_poll.start()
+called_once_a_week_gm_assign.start()
+called_once_a_week_mmt.start()
 
 #BOT
 client.run(os.getenv('BOT_TOKEN'))

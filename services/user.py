@@ -2,10 +2,10 @@ import discord
 import re
 import os
 import asyncio
-import requests
 from client import client
 from dotenv import load_dotenv
 from utils import get_seconds_till_weekday, send_request
+from logger import errorLogger, infoLogger
 load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
@@ -26,10 +26,8 @@ async def new_member_joined(member, GREETING_CHANNEL):
   user_prompt.add_field(name=" Welcome ", value= new_user_message, inline=False)
   await ch.send(embed= user_prompt)
 
-  #user_email = await get_user_email_and_id(member)
   user_email = "temp@gmail.com"         #temporarily
-  # if user_email:
-  resp = await submit_user_details(user_email, member)  
+  resp = await submit_user_details(user_email, member)
   return resp
 
 
@@ -53,7 +51,7 @@ async def get_user_email_and_id(user):
                 email.content))
         else:
             await user.send(
-                'Email not valid , pls try again with `-email` command')
+                'Email not valid , pls try again with `-dn-email` command')
             email=False
 
     except asyncio.TimeoutError:
@@ -66,9 +64,10 @@ async def get_user_email_and_id(user):
 
 
 # Post user details in database
-async def submit_user_details(user_email, member):
+async def submit_user_details(member,user_email=None):
 
-    url = os.getenv('BASE_URL') + '/api/v1/users'
+    url = '/api/v1/users'
+    print(url)
     myobj = {
         "data": {
           "attributes":{
@@ -82,7 +81,11 @@ async def submit_user_details(user_email, member):
           "type":"users"
         }
     }
-
-    resp = await send_request(method_type="POST", url=url, data=myobj)
-    resp = resp.json()
-    return resp
+    try:
+        resp = await send_request(method_type="POST", url=url, data=myobj)
+        resp = resp.json()
+        infoLogger.info('User request successfully sent')
+        return resp
+    except AttributeError as e:
+        errorLogger.error('Error while updating User data',exc_info=e)
+        return e

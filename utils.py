@@ -8,6 +8,8 @@ from client import client
 import requests
 import os
 from dotenv import load_dotenv
+from logger import errorLogger
+from requests.exceptions import ConnectionError
 load_dotenv()
 
 IST = pytz.timezone('Asia/Kolkata')
@@ -81,7 +83,19 @@ async def send_request(method_type, url, data=None):
         'Content-Type': 'application/vnd.api+json',
         'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
-   
-    response = requests.request(method_type, url, headers=headers, json=data)
-    print(response.json())
+
+
+    try:
+        response = requests.request(method_type, url, headers=headers, json=data)
+    except ConnectionError as e:
+        # Backend down or bad url
+        print('something')
+        errorLogger.error('Error in connecting to backend server', exc_info=e)
+        return e
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        # Whoops it wasn't a 200
+        errorLogger.error('Error in getting response',exc_info=e)
+        return e
     return response
