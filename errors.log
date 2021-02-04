@@ -1,22 +1,22 @@
-2021-02-04 10:54:54,878:INFO:discord.client: logging in using static token
-2021-02-04 10:54:55,925:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
-2021-02-04 10:54:56,320:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-xwf7",{"micros":57848,"calls":["discord-sessions-prd-2-97",{"micros":53940,"calls":["start_session",{"micros":36544,"calls":["api-prd-main-xd5g",{"micros":33190,"calls":["get_user",{"micros":4824},"add_authorized_ip",{"micros":2314},"get_guilds",{"micros":2502},"coros_wait",{"micros":0}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":4398,"calls":[]}]}]}] (Session ID: c798deaa0a3d5a650a3c376712622ab9).
-2021-02-04 10:55:11,363:ERROR:discord: Error in connecting to backend server
+2021-02-05 01:49:04,031:INFO:discord.client: logging in using static token
+2021-02-05 01:49:04,914:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
+2021-02-05 01:49:05,278:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-vl2d",{"micros":55607,"calls":["discord-sessions-prd-2-73",{"micros":51855,"calls":["start_session",{"micros":45976,"calls":["api-prd-main-cvbf",{"micros":42213,"calls":["get_user",{"micros":3133},"add_authorized_ip",{"micros":1208},"get_guilds",{"micros":3694},"coros_wait",{"micros":0}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":5012,"calls":[]}]}]}] (Session ID: 59c93bc81b0a21b3982d130ac0b5d7bf).
+2021-02-05 01:49:16,590:ERROR:discord: Error in connecting to backend server
 Traceback (most recent call last):
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
     conn = connection.create_connection(
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
     raise err
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
     sock.connect(sa)
 ConnectionRefusedError: [Errno 111] Connection refused
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
     httplib_response = self._make_request(
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
     conn.request(method, url, **httplib_request_kw)
   File "/usr/lib/python3.8/http/client.py", line 1255, in request
     self._send_request(method, url, body, headers, encode_chunked)
@@ -28,38 +28,329 @@ Traceback (most recent call last):
     self.send(msg)
   File "/usr/lib/python3.8/http/client.py", line 950, in send
     self.connect()
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
     conn = self._new_conn()
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
     raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe1414e50a0>: Failed to establish a new connection: [Errno 111] Connection refused
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
     resp = conn.urlopen(
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
     retries = retries.increment(
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
     raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/writeups/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused'))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/contents?filter%5Bparent_id%5D=algo (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e50a0>: Failed to establish a new connection: [Errno 111] Connection refused'))
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/prachipathrayan/Sites/discord-bot/utils.py", line 89, in send_request
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
     response = requests.request(method_type, url, headers=headers, json=data)
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
     return session.request(method=method, url=url, **kwargs)
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
     resp = self.send(prep, **send_kwargs)
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
     r = adapter.send(request, **kwargs)
-  File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
     raise ConnectionError(e, request=request)
-requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/writeups/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused'))
-2021-02-04 10:56:29,626:INFO:discord.client: Cleaning up tasks.
-2021-02-04 10:56:29,626:INFO:discord.client: Cleaning up after 5 tasks.
-2021-02-04 10:56:29,632:INFO:discord.client: All tasks finished cancelling.
-2021-02-04 10:56:29,633:INFO:discord.client: Closing the event loop.
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/contents?filter%5Bparent_id%5D=algo (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e50a0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:49:16,622:ERROR:discord: The request failed with an empty response
+2021-02-05 01:49:47,808:ERROR:discord: Error in connecting to backend server
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1255, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1301, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1250, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1010, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 950, in send
+    self.connect()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/users/leaderboard (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
+    response = requests.request(method_type, url, headers=headers, json=data)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/users/leaderboard (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:49:57,625:ERROR:discord: Error in connecting to backend server
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1255, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1301, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1250, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1010, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 950, in send
+    self.connect()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe1413ed580>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/submissions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1413ed580>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
+    response = requests.request(method_type, url, headers=headers, json=data)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/submissions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1413ed580>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:50:06,133:ERROR:discord: Error in connecting to backend server
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1255, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1301, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1250, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1010, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 950, in send
+    self.connect()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/submissions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
+    response = requests.request(method_type, url, headers=headers, json=data)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/submissions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1414e5700>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:50:15,930:ERROR:discord: Error in connecting to backend server
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1255, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1301, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1250, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1010, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 950, in send
+    self.connect()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe1413ed4f0>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/groupcalls/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1413ed4f0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
+    response = requests.request(method_type, url, headers=headers, json=data)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/groupcalls/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1413ed4f0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:50:17,113:ERROR:discord: Error in connecting to backend server
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 387, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1255, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1301, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1250, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1010, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 950, in send
+    self.connect()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fe141403040>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/groupcalls/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe141403040>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/utils.py", line 89, in send_request
+    response = requests.request(method_type, url, headers=headers, json=data)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/udit/Projects/Devsnest/DiscordBot/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/groupcalls/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe141403040>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-05 01:51:17,408:INFO:discord.client: Cleaning up tasks.
+2021-02-05 01:51:17,409:INFO:discord.client: Cleaning up after 4 tasks.
+2021-02-05 01:51:17,413:INFO:discord.client: All tasks finished cancelling.
+2021-02-05 01:51:17,414:INFO:discord.client: Closing the event loop.

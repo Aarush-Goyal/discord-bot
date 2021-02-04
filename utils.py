@@ -65,7 +65,7 @@ async def data_not_found(ch, title="Sorry, Invalid parameters has been passed"):
       title= title,
       description= 'Use `dn-help` to explore more and continue learning !'
     )
-    await ch.send(embed=embed)
+    asyncio.ensure_future(ch.send(embed=embed))
 
 
 async def not_recognized(user,correct_command):

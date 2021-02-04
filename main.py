@@ -1,5 +1,6 @@
 # Work with Python 3.6
 import os
+import asyncio
 from services.gbu import called_once_a_week_gbu
 from client import client
 from event import on_user_message
@@ -11,7 +12,6 @@ from llistMembers import listExixtingMembers
 
 
 load_dotenv()
-#gm = GroupMeet(client=client,channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 
 @client.event
 async def on_ready():
@@ -23,8 +23,9 @@ async def on_ready():
 @client.event
 async def on_member_join(member):
     resp = await new_member_joined(member, int(os.getenv('GREETING_CHANNEL')))
-    
-    await assign_mentor_to_new_user(resp)
+    if resp: 
+        asyncio.ensure_future(assign_mentor_to_new_user(resp))
+    # ToDo: add logger in else
 
 
 @client.event
@@ -33,7 +34,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    await on_user_message(message)
+    asyncio.ensure_future(on_user_message(message))
     
 
 @client.event

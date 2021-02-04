@@ -23,7 +23,8 @@ async def assign_mentors_to_all():
   resp = await send_request(method_type="GET", url="/api/v1/mmts")
   resp = resp.json()
   mentors_data = resp["data"]
-        
+  
+  tasks = []
   for i in range(len(mentors_data)):
     user_discord_id = mentors_data[i]["attributes"]["user_discord_id"]
     mentor_discord_id = mentors_data[i]["attributes"]["mentors_discord_id"]
@@ -36,25 +37,32 @@ async def assign_mentors_to_all():
     user_prompt = get_basic_prompt(user_msg)
     mentor_prompt = get_basic_prompt(mentor_msg)
 
-    await user.send( embed= user_prompt)
-    await mentor.send( embed= mentor_prompt)
-
+    tasks.append(asyncio.create_task(user.send( embed= user_prompt)))
+    tasks.append(asyncio.create_task(mentor.send( embed= mentor_prompt)))
+  await asyncio.wait(tasks)
 
 async def assign_mentor_to_new_user(resp):
   user_discord_id = resp["data"]["attributes"]["discord_id"]
   mentor_discord_id = resp["data"]["attributes"]["mentor_discord_id"]
   
-
-  user = await client.fetch_user(int(user_discord_id)) 
-  mentor = await client.fetch_user(int(mentor_discord_id))
+  try:
+    user = await client.fetch_user(int(user_discord_id)) 
+  except: 
+    # ToDo: add logger - user
+    return 
+  try:
+    mentor = await client.fetch_user(int(mentor_discord_id))
+  except: 
+    # ToDo: add logger - mentor
+    return 
 
   user_msg = 'Welcome to Devsnest community. This is a world of peer learning. \n You can use dn-help command to get access to various options and play with the bot and make your learning ahead fun. \n \n Here we follow a mentor-mentee system so that everyone has access to someone who can clear doubts. Your initial mentor is: {0.mention}'.format(mentor) + '\n Feel free to schedule sessions weekly along with the mentor and get your doubts resolved weekly. Let the learning begin!👍 '
   mentor_msg = 'Hope you are having a great time! \n New Member has joined the channel now. {0.mention}'.format(user) + '\n He is your mentee for this week. \n You are required to help him with the server and give a dedicated amount of time to your mentee and help user to get doubts resolved. Continue learning 👍 '
   user_prompt = get_basic_prompt(user_msg)
   mentor_prompt = get_basic_prompt(mentor_msg)
 
-  await user.send( embed= user_prompt)
-  await mentor.send( embed= mentor_prompt)
+  asyncio.ensure_future(user.send( embed= user_prompt))
+  asyncio.ensure_future(mentor.send( embed= mentor_prompt))
 
 
 

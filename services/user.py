@@ -27,7 +27,7 @@ async def new_member_joined(member, GREETING_CHANNEL):
 
   user_prompt = get_user_joined_prompt()
   user_prompt.add_field(name=" Welcome ", value= new_user_message, inline=False)
-  await ch.send(embed= user_prompt)
+  asyncio.ensure_future(ch.send(embed= user_prompt))
 
   user_email = "temp@gmail.com"         #temporarily
   resp = await submit_user_details(user_email, member)
@@ -58,9 +58,9 @@ async def get_user_email_and_id(user):
             email=False
 
     except asyncio.TimeoutError:
-        await user.send(
+        asyncio.ensure_future(user.send(
             'Sorry, You didn\'t replied in time, Please send `-email` again to get the prompt again.'
-        )
+        ))
         email = False
 
     return email
@@ -91,7 +91,5 @@ async def submit_user_details(member,user_email=None):
         errorLogger.error('Error while getting response', e)
         return None
 
-    if resp.status_code==200:
-        resp = resp.json()
-        return resp
-
+    return resp.json()
+    

@@ -18,7 +18,7 @@ async def calc_days(message):
             if days<1:
                 raise Exception("Invalid no of days")
         except:
-            await data_not_found(message.channel, "Please enter valid no. of day count")
+            asyncio.ensure_future(data_not_found(message.channel, "Please enter valid no. of day count"))
             return False
     else:
         days = 7
@@ -60,4 +60,4 @@ async def show_user_report(resp, message, days):
 
         prompt.add_field(name="Question solved per topic: ", value= report,inline=False)
 
-    await message.channel.send(embed= prompt)
+    asyncio.ensure_future(message.channel.send(embed= prompt))

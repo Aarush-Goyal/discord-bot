@@ -7,7 +7,7 @@ import discord
 import os
 from dotenv import load_dotenv
 import requests
-
+import asyncio
 load_dotenv()
 
 
@@ -22,11 +22,11 @@ def get_prompt_help():
 
 async def on_user_message(message):
     if message.content.startswith('dn-assign-mentors'):
-        await assign_mentors_to_all()
+        asyncio.ensure_future(assign_mentors_to_all())
 
     if message.content.startswith('dn-hello'):
         msg = 'hello {0.author.mention}'.format(message)
-        await message.channel.send(msg)
+        asyncio.ensure_future(message.channel.send(msg))
 
     if message.content.startswith('dn-help'):
         msg = 'dn-help: To get command help \n \n dn-fetch: To get list of questions \n \n dn-mark-done: To mark question done \n \n dn-mark-undone: To mark question undone \n \n dn-mark-doubt: To get mark question as doubt \n \n dn-report: To get progress report \n \n dn-leaderboard: To get list of top 10 students of week \n '
@@ -37,39 +37,40 @@ async def on_user_message(message):
             value=msg,
             inline=False)
 
-        await message.channel.send(embed=prompt)
+        asyncio.ensure_future(message.channel.send(embed=prompt))
 
     if message.content.startswith('dn-email'):
         user_email = await get_user_email_and_id(message.author)
         if user_email:
-            await submit_user_details(user_email, message.author)
+            asyncio.ensure_future(submit_user_details(message.author,user_email))
 
     if message.content.startswith('dn-fetch'):
         if await check_channel_ask_a_bot(message):
-            await fetch(message)
+            asyncio.ensure_future(fetch(message))
+            print('Fetch cmd')
 
     if message.content.startswith('dn-mark-done'):
         if await check_channel_ask_a_bot(message):
-            await mark_ques_status(message.author, message, 0)
+            asyncio.ensure_future(mark_ques_status(message.author, message, 0))
 
 
     if message.content.startswith('dn-mark-undone'):
         if await check_channel_ask_a_bot(message):
-            await mark_ques_status(message.author, message, 1)
+            asyncio.ensure_future(mark_ques_status(message.author, message, 1))
 
 
     if message.content.startswith('dn-mark-doubt'):
         if await check_channel_ask_a_bot(message):
-            await mark_ques_status(message.author, message, 2)
+            asyncio.ensure_future(mark_ques_status(message.author, message, 2))
 
     if message.content.startswith('dn-report'):
         if await check_channel_ask_a_bot(message):
             days = await calc_days(message)
             if days:
                 resp = await get_report_from_db(message, days)
-                await show_user_report(resp, message, days)
+                asyncio.ensure_future(show_user_report(resp, message, days))
 
     if message.content.startswith('dn-leaderboard'):
         if await check_channel_ask_a_bot(message):
-            await get_leaderboard(message)
+            asyncio.ensure_future(get_leaderboard(message))
 
