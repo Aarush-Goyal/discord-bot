@@ -1,7 +1,7 @@
-2021-02-03 04:49:47,359:INFO:discord.client: logging in using static token
-2021-02-03 04:49:48,560:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
-2021-02-03 04:49:49,036:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-qhtw",{"micros":143554,"calls":["discord-sessions-prd-2-40",{"micros":142266,"calls":["start_session",{"micros":82216,"calls":["api-prd-main-6g2q",{"micros":79321,"calls":["get_user",{"micros":4567},"add_authorized_ip",{"micros":5544},"get_guilds",{"micros":4483},"coros_wait",{"micros":0}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":26537,"calls":[]}]}]}] (Session ID: 91643246ac3f81705995464c3b29ceaf).
-2021-02-03 04:52:35,075:ERROR:discord: Error in connecting to backend server
+2021-02-04 10:54:54,878:INFO:discord.client: logging in using static token
+2021-02-04 10:54:55,925:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
+2021-02-04 10:54:56,320:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-xwf7",{"micros":57848,"calls":["discord-sessions-prd-2-97",{"micros":53940,"calls":["start_session",{"micros":36544,"calls":["api-prd-main-xd5g",{"micros":33190,"calls":["get_user",{"micros":4824},"add_authorized_ip",{"micros":2314},"get_guilds",{"micros":2502},"coros_wait",{"micros":0}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":4398,"calls":[]}]}]}] (Session ID: c798deaa0a3d5a650a3c376712622ab9).
+2021-02-04 10:55:11,363:ERROR:discord: Error in connecting to backend server
 Traceback (most recent call last):
   File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 159, in _new_conn
     conn = connection.create_connection(
@@ -32,7 +32,7 @@ Traceback (most recent call last):
     conn = self._new_conn()
   File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/connection.py", line 171, in _new_conn
     raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7fd578e59b50>: Failed to establish a new connection: [Errno 111] Connection refused
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused
 
 During handling of the above exception, another exception occurred:
 
@@ -43,7 +43,7 @@ Traceback (most recent call last):
     retries = retries.increment(
   File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 436, in increment
     raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/contents?filter%5Bparent_id%5D=algo (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd578e59b50>: Failed to establish a new connection: [Errno 111] Connection refused'))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/writeups/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused'))
 
 During handling of the above exception, another exception occurred:
 
@@ -58,9 +58,8 @@ Traceback (most recent call last):
     r = adapter.send(request, **kwargs)
   File "/home/prachipathrayan/Sites/discord-bot/venv/lib/python3.8/site-packages/requests/adapters.py", line 516, in send
     raise ConnectionError(e, request=request)
-requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: //api/v1/contents?filter%5Bparent_id%5D=algo (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd578e59b50>: Failed to establish a new connection: [Errno 111] Connection refused'))
-2021-02-03 04:52:35,619:ERROR:discord: The request failed with an empty response
-2021-02-03 04:56:40,820:INFO:discord.client: Cleaning up tasks.
-2021-02-03 04:56:40,820:INFO:discord.client: Cleaning up after 4 tasks.
-2021-02-03 04:56:40,822:INFO:discord.client: All tasks finished cancelling.
-2021-02-03 04:56:40,822:INFO:discord.client: Closing the event loop.
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/v1/writeups/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f20d748a250>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2021-02-04 10:56:29,626:INFO:discord.client: Cleaning up tasks.
+2021-02-04 10:56:29,626:INFO:discord.client: Cleaning up after 5 tasks.
+2021-02-04 10:56:29,632:INFO:discord.client: All tasks finished cancelling.
+2021-02-04 10:56:29,633:INFO:discord.client: Closing the event loop.

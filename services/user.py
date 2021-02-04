@@ -2,6 +2,9 @@ import discord
 import re
 import os
 import asyncio
+
+import requests
+
 from client import client
 from dotenv import load_dotenv
 from utils import get_seconds_till_weekday, send_request
@@ -83,9 +86,12 @@ async def submit_user_details(member,user_email=None):
     }
     try:
         resp = await send_request(method_type="POST", url=url, data=myobj)
-        resp = resp.json()
         infoLogger.info('User request successfully sent')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting response', e)
+        return None
+
+    if resp.status_code==200:
+        resp = resp.json()
         return resp
-    except AttributeError as e:
-        errorLogger.error('Error while updating User data',exc_info=e)
-        return e
+

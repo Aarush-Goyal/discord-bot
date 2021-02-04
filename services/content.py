@@ -1,4 +1,6 @@
 import discord
+import requests
+
 from logger import errorLogger, infoLogger
 import os
 from client import client
@@ -86,8 +88,9 @@ async def fetch_content(unique_id, ch):
     payload = {}
     try:
         response = await send_request(method_type="GET", url=url, data=payload)
-    except ConnectionError as e:
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error('Error while getting response', e)
+        response = None
 
     if not response:
         await data_not_found(ch, "Invalid topic name!")
@@ -129,13 +132,15 @@ async def fetch(message):
 
     try:
         response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
-    except ConnectionError as e:
-        errorLogger.error('Error while getting response',e)
+    except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting response', e)
+        response = None
 
     if not response:
         await data_not_found(ch, "No topics present !")
         errorLogger.error('The request failed with an empty response')
         return False
+
 
     resp = response.json()
 
@@ -198,6 +203,9 @@ async def mark_ques_status(user, command, status):
     ch = command.channel
     unique_id=command.content.split(' ')[1]
     res = await update_submissions(user, unique_id, status)
+    if not res:
+        await data_not_found(ch, "Invalid question id, Please enter correct one!")
+        return res
     res = res.json()
 
     if status == 0:
@@ -239,13 +247,14 @@ async def update_submissions(user, unique_id, status):
             "type": "submissions"
         }
     }
-    res = await send_request(method_type="POST", url=url, data=payload)
-    if type(res)=='HTTPError':
-        print(1)
-        errorLogger.error('send_request: Error while getting the response', exc_info=res)
-        return res
-    infoLogger.info('send_request: data retrieved successfully')
-    return res
+    try:
+        response = await send_request(method_type="POST", url=url, data=payload)
+        infoLogger.info('send_request: data retrieved successfully')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting response', e)
+        response = None
+
+    return response
 
 
 def embed_leaderboard(embed, leaderboard):
@@ -272,8 +281,9 @@ async def get_leaderboard(message):
     url = 'api/v1/users/leaderboard'
     try:
         res = await send_request(method_type="GET", url=url)
-    except ConnectionError as e:
-        errorLogger.error('Error while sending request', exc_info=e)
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting response', e)
+        res = None
 
     if not res:
         await data_not_found(message.channel, "Insufficient data to create leaderboard !")
