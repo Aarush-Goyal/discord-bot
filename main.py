@@ -56,3 +56,4 @@ async def on_raw_reaction_add(payload):
 
 #BOT
 client.run(os.getenv('BOT_TOKEN'))
+print("Discord bot started successfully")
