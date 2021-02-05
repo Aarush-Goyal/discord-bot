@@ -7,7 +7,7 @@ import requests
 import constants
 from discord.ext import tasks
 from client import client
-from logger import errorLogger
+from logger import errorLogger, infoLogger
 from utils import get_seconds_till_weekday, send_request
 
 def show_GBN_prompt(name):
@@ -67,13 +67,15 @@ async def get_user_gbu(message_channel, member):
                   "discord_id": str(member.id),
                   "description": desc,
                   "week": 1
-              }
+              },
+      "type":"writeups"
           }
       }
       try:
           await send_request(method_type="POST", url="api/v1/writeups/", data=payload)
+          infoLogger.info('User writeup is successfully sent to the database')
       except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-          errorLogger.error('Error in sending data to database', e)
+          errorLogger.error('Error while sending writeup to database', e)
 
 @tasks.loop(hours=168.0)  # 168 hours in a week
 async def called_once_a_week_gbu():

@@ -88,7 +88,7 @@ async def submit_user_details(member,user_email=None):
         resp = await send_request(method_type="POST", url=url, data=myobj)
         infoLogger.info('User request successfully sent')
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error('Error while getting response', e)
+        errorLogger.error('Error while registering the user to the database', e)
         return None
 
     return resp.json()

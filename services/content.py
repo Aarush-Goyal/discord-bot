@@ -90,8 +90,9 @@ async def fetch_content(unique_id, ch):
     payload = {}
     try:
         response = await send_request(method_type="GET", url=url, data=payload)
+        infoLogger.info('Fetch request is successful')
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error('Error while getting response', e)
+        errorLogger.error('Error while getting response', exc_info=e)
         response = None
 
     if not response:
@@ -103,7 +104,7 @@ async def fetch_content(unique_id, ch):
 
     if len(resp["data"])==0:
         asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
-        errorLogger.error('Empty data field')
+        errorLogger.error('The topic does not exist in the database')
         return False
     else:
         content = extract_content(resp)
@@ -134,8 +135,9 @@ async def fetch(message):
 
     try:
         response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+        infoLogger.info('topics fetched')
     except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError) as e:
-        errorLogger.error('Error while getting response', e)
+        errorLogger.error('Error while getting the fetch response', exc_info=e)
         response = None
 
     if not response:
@@ -148,7 +150,7 @@ async def fetch(message):
 
     if len(resp["data"])==0:
         asyncio.ensure_future(data_not_found(ch, "No topics present !"))
-        errorLogger.error('The request failed with an empty data')
+        errorLogger.error('Fetch request failed with an empty data')
         return False
 
     curriculums = extract_content(resp)
@@ -177,6 +179,7 @@ async def send_done_in_channel(user, unique_id):
     try:
         question_name = res['data'][0]['attributes']['name']
         question_link = res['data'][0]['attributes']['link']
+        infoLogger.info('update-submissions: data successfully parsed')
     except:
         errorLogger.error('Error while parsing data')
         return False
@@ -203,7 +206,13 @@ async def send_done_in_channel(user, unique_id):
 
 async def mark_ques_status(user, command, status):
     ch = command.channel
-    unique_id=command.content.split(' ')[1]
+    try:
+        unique_id=command.content.split(' ')[1]
+        infoLogger.info('Question unique id is received')
+    except IndexError as e:
+        errorLogger.error('No unique_id is received from the command', exc_info=e)
+        asyncio.ensure_future(data_not_found(ch, "No question id is mentioned, Please enter correct one!"))
+        return
     res = await update_submissions(user, unique_id, status)
     if not res:
         asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
@@ -223,6 +232,7 @@ async def mark_ques_status(user, command, status):
 
     if not res["data"]["id"]:
         asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
+        errorLogger.error('Invalid question id')
 
     else:
         content = extract_content(res)
@@ -251,9 +261,9 @@ async def update_submissions(user, unique_id, status):
     }
     try:
         response = await send_request(method_type="POST", url=url, data=payload)
-        infoLogger.info('send_request: data retrieved successfully')
+        infoLogger.info('send_request: submissions updated successfully')
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error('Error while getting response', e)
+        errorLogger.error('Error while submitting the response', exc_info=e)
         response = None
 
     return response
@@ -283,8 +293,9 @@ async def get_leaderboard(message):
     url = 'api/v1/users/leaderboard'
     try:
         res = await send_request(method_type="GET", url=url)
+        infoLogger.info('leaderboard is successfully retrieved')
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error('Error while getting response', e)
+        errorLogger.error('Error while getting the leaderboard', exc_info=e)
         res = None
 
     if not res:

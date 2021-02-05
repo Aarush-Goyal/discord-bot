@@ -28,6 +28,7 @@ d = {
 # Pass time in format HH:MM:SS.MS
 
 def get_seconds_till_weekday(weekday, time):
+    # ToDo negative time fix
 
     curr = date.today().weekday()
     diff = d[weekday] - curr

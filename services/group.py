@@ -5,6 +5,8 @@ import requests
 import constants
 from client import client
 from discord.ext import tasks
+
+from logger import errorLogger, infoLogger
 from utils import get_seconds_till_weekday, send_request, data_not_found
 from dotenv import load_dotenv
 
@@ -101,14 +103,25 @@ class GroupMeet:
                 }
             }
         }
-        asyncio.ensure_future(send_request(method_type="POST", url="api/v1/groupcalls/", data=payload))
-
+        try:
+            await send_request(method_type="POST", url="api/v1/groupcalls/", data=payload)
+            infoLogger.info('User response for the groupcall has been recorded')
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+            errorLogger.error('Error while recording user response for groupcall', e)
 
     async def post_groups_to_channel(self):
 
-        groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
+        try:
+            groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
+            infoLogger.info('Groups received from database')
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+            errorLogger.error('Error while getting the groups', e)
+            groups_list=None
+
+        if groups_list is None:
+            return
+
         groups_list= groups_list.json()
-        print(groups_list)
 
         if groups_list == [[]]:
             print(self.client.get_channel(int(self.channel_id)))

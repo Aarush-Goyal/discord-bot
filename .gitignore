@@ -5,3 +5,4 @@ __pycache__
 services/__pycache__
 discord.log
 errors.log
+constants.py

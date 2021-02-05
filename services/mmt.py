@@ -6,6 +6,8 @@ from client import client
 import constants
 from dotenv import load_dotenv
 from discord.ext import tasks
+
+from logger import errorLogger, infoLogger
 from utils import get_seconds_till_weekday, send_request
 import discord
 load_dotenv()
@@ -46,14 +48,16 @@ async def assign_mentor_to_new_user(resp):
   mentor_discord_id = resp["data"]["attributes"]["mentor_discord_id"]
   
   try:
-    user = await client.fetch_user(int(user_discord_id)) 
-  except: 
-    # ToDo: add logger - user
+    user = await client.fetch_user(int(user_discord_id))
+    infoLogger.info('User id is successfully retrieved from the discord')
+  except:
+    errorLogger.error('Error while retrieving the user from the discord')
     return 
   try:
     mentor = await client.fetch_user(int(mentor_discord_id))
+    infoLogger.info('Mentor id is successfully retrieved from the discord')
   except: 
-    # ToDo: add logger - mentor
+    errorLogger.error('Error while retrieving the mentor from the discord')
     return 
 
   user_msg = 'Welcome to Devsnest community. This is a world of peer learning. \n You can use dn-help command to get access to various options and play with the bot and make your learning ahead fun. \n \n Here we follow a mentor-mentee system so that everyone has access to someone who can clear doubts. Your initial mentor is: {0.mention}'.format(mentor) + '\n Feel free to schedule sessions weekly along with the mentor and get your doubts resolved weekly. Let the learning begin!👍 '

@@ -68,6 +68,7 @@ async def on_user_message(message):
             days = await calc_days(message)
             if days:
                 resp = await get_report_from_db(message, days)
+                # ToDo report handling
                 asyncio.ensure_future(show_user_report(resp, message, days))
 
     if message.content.startswith('dn-leaderboard'):

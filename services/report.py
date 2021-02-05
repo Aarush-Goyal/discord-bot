@@ -4,6 +4,7 @@ import os
 import asyncio
 import requests
 from client import client
+from logger import errorLogger
 from utils import get_seconds_till_weekday, send_request, data_not_found
 from dotenv import load_dotenv
 load_dotenv()
@@ -26,10 +27,15 @@ async def calc_days(message):
 
 
 async def get_report_from_db(message, days):
-    url = '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=' + str(days) 
+    url = '/api/v1/users/report?discord_id=' + str(message.author.id) + '&days=' + str(days)
+    try:
+        resp = await send_request(method_type="GET", url=url)
+        resp = resp.json()
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting the report from the server', e)
+        resp = None
 
-    resp = await send_request(method_type="GET", url=url)
-    resp = resp.json()
+
     return resp
 
 
@@ -42,6 +48,8 @@ def get_prompt_report(days):
 
 
 async def show_user_report(resp, message, days):
+    if not resp:
+        return
     prompt = get_prompt_report(days)
     prompt.add_field(
         name="Total questions solved", value= str(resp["total_solved_ques"]), inline=False)
