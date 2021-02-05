@@ -55,5 +55,5 @@ async def on_raw_reaction_add(payload):
 # called_once_a_week_mmt.start()
 
 #BOT
-client.run(os.getenv('BOT_TOKEN'))
 print("Discord bot started successfully")
+client.run(os.getenv('BOT_TOKEN'))
