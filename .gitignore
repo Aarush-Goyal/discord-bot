@@ -3,7 +3,4 @@ venv
 .idea
 __pycache__
 services/__pycache__
-errors.log
-info.log
-constants.py
-backendTest.py
+*.log
