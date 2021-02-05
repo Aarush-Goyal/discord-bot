@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - ls
+      - docker build -t discord-bot .
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 083378476485.dkr.ecr.ap-south-1.amazonaws.com
+      - docker tag discord-bot:latest 083378476485.dkr.ecr.ap-south-1.amazonaws.com/discord-bot:latest
+      - docker push 083378476485.dkr.ecr.ap-south-1.amazonaws.com/discord-bot:latest
