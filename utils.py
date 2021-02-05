@@ -8,6 +8,8 @@ from client import client
 import requests
 import os
 from dotenv import load_dotenv
+from logger import errorLogger
+from requests.exceptions import ConnectionError
 load_dotenv()
 
 IST = pytz.timezone('Asia/Kolkata')
@@ -26,6 +28,7 @@ d = {
 # Pass time in format HH:MM:SS.MS
 
 def get_seconds_till_weekday(weekday, time):
+    # ToDo negative time fix
 
     curr = date.today().weekday()
     diff = d[weekday] - curr
@@ -63,7 +66,7 @@ async def data_not_found(ch, title="Sorry, Invalid parameters has been passed"):
       title= title,
       description= 'Use `dn-help` to explore more and continue learning !'
     )
-    await ch.send(embed=embed)
+    asyncio.ensure_future(ch.send(embed=embed))
 
 
 async def not_recognized(user,correct_command):
@@ -81,7 +84,18 @@ async def send_request(method_type, url, data=None):
         'Content-Type': 'application/vnd.api+json',
         'Authorization': 'Bearer '+ os.getenv('TOKEN')
     }
-   
-    response = requests.request(method_type, url, headers=headers, json=data)
-    print(response.json())
+
+
+    try:
+        response = requests.request(method_type, url, headers=headers, json=data)
+    except ConnectionError as e:
+        # Backend down or bad url
+        errorLogger.error('Error in connecting to backend server : ' + str(e))
+        raise ConnectionError
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        # Whoops it wasn't a 200
+        errorLogger.error('Error in getting response : '+str(e))
+        raise requests.exceptions.HTTPError
     return response

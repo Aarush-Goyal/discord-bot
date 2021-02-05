@@ -1,10 +1,14 @@
 import discord
 import asyncio
 import os
+
+import requests
+
 import constants
 from discord.ext import tasks
 from client import client
-from utils import get_seconds_till_weekday
+from logger import errorLogger, infoLogger
+from utils import get_seconds_till_weekday, send_request
 
 def show_GBN_prompt(name):
     return discord.Embed(
@@ -55,19 +59,33 @@ async def get_user_gbu(message_channel, member):
 
       await message_channel.send(embed= gbn_prompt)
 
+      desc = "Good: " + good.content + " Bad: " + bad.content + " Ugly: " + plan.content
+
+      payload = {
+          "data": {
+              "attributes": {
+                  "discord_id": str(member.id),
+                  "description": desc,
+                  "week": 1
+              },
+      "type":"writeups"
+          }
+      }
+      try:
+          await send_request(method_type="POST", url="api/v1/writeups/", data=payload)
+          infoLogger.info('User writeup is successfully sent to the database')
+      except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+          errorLogger.error('Error while sending writeup to database', e)
 
 @tasks.loop(hours=168.0)  # 168 hours in a week
 async def called_once_a_week_gbu():
     message_channel = client.get_channel(int(os.environ['GBU_CHANNEL']))
-    tasks = []
 
-    loop = asyncio.get_event_loop()
     tasks = [
-        loop.create_task(get_user_gbu(message_channel, member))
-        for member in message_channel.members if member.name == 'Priya'
+        asyncio.create_task(get_user_gbu(message_channel, member))
+        for member in message_channel.members if member.bot ==False
     ]
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.close()
+    await asyncio.wait(tasks)
 
 @called_once_a_week_gbu.before_loop
 async def before_gbu():

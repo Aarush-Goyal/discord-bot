@@ -1,9 +1,13 @@
 import discord
 import requests
+
+from logger import errorLogger, infoLogger
 import os
 from client import client
 from utils import take_input_dm, send_request, data_not_found
 from dotenv import load_dotenv
+
+import asyncio
 
 load_dotenv()
 
@@ -11,9 +15,7 @@ def extract_content(sample):
     content = []
     try:
         for _content in sample['data']:
-            temp = {}
-            temp['name'] = _content['attributes']['name']
-            temp['unique_id'] = _content['attributes']['unique_id']
+            temp = {'name': _content['attributes']['name'], 'unique_id': _content['attributes']['unique_id']}
             if not _content['attributes']['link'] == "null":
                 temp['link'] = _content['attributes']['link']
             else:
@@ -22,6 +24,7 @@ def extract_content(sample):
 
     except:
         #Cannot get curriculums
+        errorLogger.error('Cannot get curriculums')
         content = False
     return content
 
@@ -43,8 +46,9 @@ def embed_content(embed, content):
             name='`' + content[i]['unique_id'].capitalize() + '`'
 
         embed.add_field(
-            name='`' + content[i]['unique_id'] +
-            '`' + content[i]['name'].capitalize(),            
+            # name='`' + content[i]['unique_id'] +
+            # '`' +content[i]['name'].capitalize(),
+            name = name,
             value=value,
             inline=False,
         )
@@ -85,21 +89,33 @@ async def fetch_content(unique_id, ch):
     )
 
     payload = {}
+    try:
+        response = await send_request(method_type="GET", url=url, data=payload)
+        infoLogger.info('Fetch request is successful')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting response', exc_info=e)
+        response = None
 
-    response = await send_request(method_type="GET", url=url, data=payload)
+    if not response:
+        asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
+        errorLogger.error('Content not found')
+        return False
+
     resp = response.json()
 
     if len(resp["data"])==0:
-        await data_not_found(ch, "Invalid topic name!")
+        asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
+        errorLogger.error('The topic does not exist in the database')
         return False
     else:
         content = extract_content(resp)
 
         if not content:
+            errorLogger.error('invalid content')
             return False
 
         embed = embed_content(embed, content)
-        await ch.send(embed=embed)
+        asyncio.ensure_future(ch.send(embed=embed))
 
     return True
 
@@ -118,20 +134,35 @@ async def fetch(message):
 
     payload = {}
 
-    response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+    try:
+        response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
+        infoLogger.info('topics fetched')
+    except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting the fetch response', exc_info=e)
+        response = None
+
+    if not response:
+        asyncio.ensure_future(data_not_found(ch, "No topics present !"))
+        errorLogger.error('The request failed with an empty response')
+        return False
+
+
     resp = response.json()
-    
+
     if len(resp["data"])==0:
-        await data_not_found(ch, "No topics present !")
+        asyncio.ensure_future(data_not_found(ch, "No topics present !"))
+        errorLogger.error('Fetch request failed with an empty data')
         return False
 
     curriculums = extract_content(resp)
     if not curriculums:
-        await data_not_found(ch, "No topics present !")
+        asyncio.ensure_future(data_not_found(ch, "No topics present !"))
+        errorLogger.error('No topics found while parsing curriculum')
         return False
 
     embed = embed_content(embed, curriculums)
-    await ch.send(embed=embed)
+    asyncio.ensure_future(ch.send(embed=embed))
+    infoLogger.info('Fetch Data: Embed sent to the channel')
 
     return True
 
@@ -149,8 +180,9 @@ async def send_done_in_channel(user, unique_id):
     try:
         question_name = res['data'][0]['attributes']['name']
         question_link = res['data'][0]['attributes']['link']
+        infoLogger.info('update-submissions: data successfully parsed')
     except:
-        
+        errorLogger.error('Error while parsing data')
         return False
 
     embed = discord.Embed(
@@ -169,13 +201,23 @@ async def send_done_in_channel(user, unique_id):
 
     embed.set_thumbnail(url=confetti_png)
 
-    await ch.send(embed=embed)
+    asyncio.ensure_future(ch.send(embed=embed))
+    infoLogger.info('Question Status: Embed sent to the channel')
 
 
 async def mark_ques_status(user, command, status):
     ch = command.channel
-    unique_id=command.content.split(' ')[1]
+    try:
+        unique_id=command.content.split(' ')[1]
+        infoLogger.info('Question unique id is received')
+    except IndexError as e:
+        errorLogger.error('No unique_id is received from the command', exc_info=e)
+        asyncio.ensure_future(data_not_found(ch, "No question id is mentioned, Please enter correct one!"))
+        return
     res = await update_submissions(user, unique_id, status)
+    if not res:
+        asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
+        return res
     res = res.json()
 
     if status == 0:
@@ -190,17 +232,18 @@ async def mark_ques_status(user, command, status):
     )
 
     if not res["data"]["id"]:
-        await data_not_found(ch, "Invalid question id, Please enter correct one!")
+        asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
+        errorLogger.error('Invalid question id')
 
     else:
         content = extract_content(res)
         if not content:
-            await ch.send(embed=embed)
+            asyncio.ensure_future(ch.send(embed=embed))
 
             if status == 0:
-                await send_done_in_channel(user, unique_id)
+                asyncio.ensure_future(send_done_in_channel(user, unique_id))
             return True
-        await prompt_and_check(user, embed, content, False)
+        asyncio.ensure_future(prompt_and_check(user, embed, content, False))
 
 
 async def update_submissions(user, unique_id, status):
@@ -217,9 +260,14 @@ async def update_submissions(user, unique_id, status):
             "type": "submissions"
         }
     }
+    try:
+        response = await send_request(method_type="POST", url=url, data=payload)
+        infoLogger.info('send_request: submissions updated successfully')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while submitting the response', exc_info=e)
+        response = None
 
-    res = await send_request(method_type="POST", url=url, data=payload)
-    return res
+    return response
 
 
 def embed_leaderboard(embed, leaderboard):
@@ -244,20 +292,26 @@ def embed_leaderboard(embed, leaderboard):
 async def get_leaderboard(message):
 
     url = 'api/v1/users/leaderboard'
-    res = await send_request(method_type="GET", url=url)
+    try:
+        res = await send_request(method_type="GET", url=url)
+        infoLogger.info('leaderboard is successfully retrieved')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while getting the leaderboard', exc_info=e)
+        res = None
+
+    if not res:
+        asyncio.ensure_future(data_not_found(message.channel, "Insufficient data to create leaderboard !"))
+        return False
+
     res = res.json()
 
-    if res == []:
-        await data_not_found(message.channel, "Insufficient data to create leaderboard !")
-        return False
-    
     embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
     embed = embed_leaderboard(embed, res)
     
     leaderboard_png='https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif'
     embed.set_thumbnail(url=leaderboard_png)
     
-    await message.channel.send(embed=embed)
+    asyncio.ensure_future(message.channel.send(embed=embed))
     return True
 
 async def wrong_channel_prompt(desc):
@@ -272,8 +326,8 @@ async def wrong_channel_prompt(desc):
 async def check_channel_ask_a_bot(message):
   ch = message.channel
   if ch.id != int(os.environ['ASK_A_BOT']) and type(ch).__name__ != 'DMChannel':
-    prompt = await wrong_channel_prompt("Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! ")
-    await ch.send(embed= prompt)
+    prompt = asyncio.ensure_future(wrong_channel_prompt("Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "))
+    asyncio.ensure_future(ch.send(embed= prompt))
     return False
   else:
     return True

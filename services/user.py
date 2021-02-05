@@ -2,10 +2,13 @@ import discord
 import re
 import os
 import asyncio
+
 import requests
+
 from client import client
 from dotenv import load_dotenv
 from utils import get_seconds_till_weekday, send_request
+from logger import errorLogger, infoLogger
 load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
@@ -24,12 +27,10 @@ async def new_member_joined(member, GREETING_CHANNEL):
 
   user_prompt = get_user_joined_prompt()
   user_prompt.add_field(name=" Welcome ", value= new_user_message, inline=False)
-  await ch.send(embed= user_prompt)
+  asyncio.ensure_future(ch.send(embed= user_prompt))
 
-  #user_email = await get_user_email_and_id(member)
   user_email = "temp@gmail.com"         #temporarily
-  # if user_email:
-  resp = await submit_user_details(user_email, member)  
+  resp = await submit_user_details(user_email, member)
   return resp
 
 
@@ -53,27 +54,28 @@ async def get_user_email_and_id(user):
                 email.content))
         else:
             await user.send(
-                'Email not valid , pls try again with `-email` command')
+                'Email not valid , pls try again with `-dn-email` command')
             email=False
 
     except asyncio.TimeoutError:
-        await user.send(
+        asyncio.ensure_future(user.send(
             'Sorry, You didn\'t replied in time, Please send `-email` again to get the prompt again.'
-        )
+        ))
         email = False
 
     return email
 
 
 # Post user details in database
-async def submit_user_details(user_email, member):
+async def submit_user_details(member,user_email=None):
 
-    url = os.getenv('BASE_URL') + '/api/v1/users'
+    url = '/api/v1/users'
+    print(url)
     myobj = {
         "data": {
           "attributes":{
             "email": str(member.id)+ "@gmail.com",
-            "name": "discord"+member.name,
+            "name": member.name,
             "discord_id": str(member.id),
             "username": member.name,
             "password": "1234",
@@ -82,7 +84,12 @@ async def submit_user_details(user_email, member):
           "type":"users"
         }
     }
+    try:
+        resp = await send_request(method_type="POST", url=url, data=myobj)
+        infoLogger.info('User request successfully sent')
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        errorLogger.error('Error while registering the user to the database', e)
+        return None
 
-    resp = await send_request(method_type="POST", url=url, data=myobj)
-    resp = resp.json()
-    return resp
+    return resp.json()
+    

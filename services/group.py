@@ -5,6 +5,8 @@ import requests
 import constants
 from client import client
 from discord.ext import tasks
+
+from logger import errorLogger, infoLogger
 from utils import get_seconds_till_weekday, send_request, data_not_found
 from dotenv import load_dotenv
 
@@ -42,7 +44,7 @@ class GroupMeet:
 
     async def _add_reactions(self):
         for reaction in self.reactions:
-            await self.reaction_message.add_reaction(reaction)
+            asyncio.ensure_future(self.reaction_message.add_reaction(reaction))
 
     async def send_message(self):
         global is_active
@@ -55,7 +57,7 @@ class GroupMeet:
         global is_active
         if is_active and payload.message_id == self.reaction_message.id and payload.member.bot == False:
             if payload.emoji.name == "👍":
-                await self.add_users_to_db(payload.user_id, 1)
+                asyncio.ensure_future(self.add_users_to_db(payload.user_id, 1))
                 if payload.user_id not in self.accepted_user_list:
                     self.accepted_user_list.append(payload.user_id)
                     self.accepted_username_list.append(payload.member.name)
@@ -66,7 +68,7 @@ class GroupMeet:
                     pass
 
             elif payload.emoji.name == "👎":
-                await self.add_users_to_db(payload.user_id, 0)
+                asyncio.ensure_future(self.add_users_to_db(payload.user_id, 0))
                 if payload.user_id not in self.rejected_user_list:
                     self.rejected_user_list.append(payload.user_id)
                     self.rejected_username_list.append(payload.member.name)
@@ -101,18 +103,29 @@ class GroupMeet:
                 }
             }
         }
-        await send_request(method_type="POST", url="api/v1/groupcalls/", data=payload)
-
+        try:
+            await send_request(method_type="POST", url="api/v1/groupcalls/", data=payload)
+            infoLogger.info('User response for the groupcall has been recorded')
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+            errorLogger.error('Error while recording user response for groupcall', e)
 
     async def post_groups_to_channel(self):
 
-        groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
+        try:
+            groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
+            infoLogger.info('Groups received from database')
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+            errorLogger.error('Error while getting the groups', e)
+            groups_list=None
+
+        if groups_list is None:
+            return
+
         groups_list= groups_list.json()
-        print(groups_list)
 
         if groups_list == [[]]:
             print(self.client.get_channel(int(self.channel_id)))
-            await data_not_found(self.client.get_channel(int(self.channel_id)), "No one accepted the group invite this week !")
+            asyncio.ensure_future(data_not_found(self.client.get_channel(int(self.channel_id)), "No one accepted the group invite this week !"))
             return 
 
         groups = {}
@@ -143,7 +156,7 @@ class GroupMeet:
                 value=getAssignedGroupPromptDescription(grp),
                 inline=False)
 
-        await self.client.get_channel(int(self.channel_id)).send(embed=prompt)
+        asyncio.ensure_future(self.client.get_channel(int(self.channel_id)).send(embed=prompt))
 
 
 gm = GroupMeet(client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
@@ -153,7 +166,7 @@ gm = GroupMeet(client=client, channel_id=int(os.getenv('GROUPMEET_CHANNEL')))
 @tasks.loop(hours=168.00)
 async def called_once_a_week_gm_poll():
     global gm
-    await gm.send_message()
+    asyncio.ensure_future(gm.send_message())
 
 
 @called_once_a_week_gm_poll.before_loop
