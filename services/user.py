@@ -75,7 +75,7 @@ async def submit_user_details(member,user_email=None):
         "data": {
           "attributes":{
             "email": str(member.id)+ "@gmail.com",
-            "name": "discord"+member.name,
+            "name": member.name,
             "discord_id": str(member.id),
             "username": member.name,
             "password": "1234",

@@ -3,6 +3,7 @@ venv
 .idea
 __pycache__
 services/__pycache__
-discord.log
 errors.log
+info.log
 constants.py
+backendTest.py

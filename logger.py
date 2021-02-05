@@ -1,13 +1,15 @@
 import logging
 import discord
 
-def setup_logger(logger_name, log_file, level=logging.INFO):
+def setup_logger(logger_name, log_file, level):
     l = logging.getLogger(logger_name)
     formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
     file_handler = logging.FileHandler(filename=log_file,encoding='utf-8', mode='w')
     file_handler.setFormatter(formatter)
+    file_handler.setLevel(level)
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
+    stream_handler.setLevel(level)
 
     l.setLevel(level)
     l.addHandler(file_handler)
@@ -25,6 +27,4 @@ def discord_logger():
 
 
 errorLogger = setup_logger('discord', 'errors.log', logging.ERROR)
-infoLogger = setup_logger('discord', 'errors.log', logging.INFO)
-
-
+infoLogger = setup_logger('discord', 'info.log', logging.INFO)

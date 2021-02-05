@@ -46,8 +46,9 @@ def embed_content(embed, content):
             name='`' + content[i]['unique_id'].capitalize() + '`'
 
         embed.add_field(
-            name='`' + content[i]['unique_id'] +
-            '`' + content[i]['name'].capitalize(),            
+            # name='`' + content[i]['unique_id'] +
+            # '`' +content[i]['name'].capitalize(),
+            name = name,
             value=value,
             inline=False,
         )

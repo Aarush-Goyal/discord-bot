@@ -90,12 +90,12 @@ async def send_request(method_type, url, data=None):
         response = requests.request(method_type, url, headers=headers, json=data)
     except ConnectionError as e:
         # Backend down or bad url
-        errorLogger.error('Error in connecting to backend server', exc_info=e)
+        errorLogger.error('Error in connecting to backend server : ' + str(e))
         raise ConnectionError
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         # Whoops it wasn't a 200
-        errorLogger.error('Error in getting response',exc_info=e)
+        errorLogger.error('Error in getting response : '+str(e))
         raise requests.exceptions.HTTPError
     return response

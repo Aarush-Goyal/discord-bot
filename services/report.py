@@ -48,7 +48,10 @@ def get_prompt_report(days):
 
 
 async def show_user_report(resp, message, days):
+    ch = message.channel
     if not resp:
+        asyncio.ensure_future(data_not_found(ch, "No Submissions Present !"))
+        errorLogger.error('The report request failed with an empty response')
         return
     prompt = get_prompt_report(days)
     prompt.add_field(
