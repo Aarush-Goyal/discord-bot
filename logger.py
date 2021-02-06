@@ -26,5 +26,5 @@ def discord_logger():
 
 
 
-errorLogger = setup_logger('discord', 'errors.log', logging.ERROR)
+errorLogger = setup_logger('errorLog', 'errors.log', logging.ERROR)
 infoLogger = setup_logger('discord', 'info.log', logging.INFO)
