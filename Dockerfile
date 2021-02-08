@@ -1,11 +1,15 @@
-FROM python:3.10.0a4-alpine3.12
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git
-RUN apk add build-base
+FROM python:3.7.4-alpine3.12
+
 RUN mkdir /home/app
 WORKDIR /home/app
-RUN pip3 install --upgrade pip
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git build-base && \
+    rm -rf /var/cache/apk/*
+
+RUN pip3 install -qU pip wheel setuptools
 COPY ./requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN pip3 install -qr requirements.txt
 COPY ./ .
-CMD ["python","main.py"]
+
+CMD ["python", "main.py"]

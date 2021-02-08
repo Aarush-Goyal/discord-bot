@@ -1,0 +1,7 @@
+[tool.black]
+exclude = '/venv/'
+
+[tool.isort]
+profile = "black"
+atomic = true
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
