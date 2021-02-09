@@ -288,7 +288,7 @@ def embed_leaderboard(embed, leaderboard):
 
         embed.add_field(
             name=name,
-            value='has solved {0} questions this week.'.format(score),
+            value='has solved {0} questions.'.format(score),
             inline=False,
         )
 
