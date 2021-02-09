@@ -382,7 +382,7 @@ async def on_leaderboard_reaction(payload):
         await message.edit(embed=embed)
 
 
-async def wrong_channel_prompt(desc):
+def wrong_channel_prompt(desc):
     return discord.Embed(
         title='Oooooops! Seems like a Wrong channel :(',
         description=desc,
