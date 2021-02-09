@@ -5,6 +5,7 @@ import asyncio
 from logger import infoLogger, errorLogger
 from services.gbu import called_once_a_week_gbu
 from client import client
+from services.content import on_leaderboard_reaction
 from event import on_user_message
 from services.user import new_member_joined
 from services.mmt import assign_mentor_to_new_user, called_once_a_week_mmt
@@ -20,7 +21,7 @@ load_dotenv()
 async def on_ready():
     print('Logged in as', client.user.name, client.user.id)
     print('------')
-    await listExistingMembers()
+    # await listExistingMembers()
 
 
 @client.event
@@ -50,6 +51,10 @@ async def on_raw_reaction_add(payload):
         if is_active:
             await gm.on_reaction(payload)
 
+    if payload.channel_id==int(os.getenv('ASK_A_BOT')):
+        from event import last_leaderboard_message_id
+        if payload.message_id==last_leaderboard_message_id:
+            await on_leaderboard_reaction(payload)
 
 
 

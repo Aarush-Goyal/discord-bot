@@ -10,12 +10,14 @@ from dotenv import load_dotenv
 import asyncio
 
 load_dotenv()
+total_leaderboard_pages=100
 
 def extract_content(sample):
     content = []
     try:
         for _content in sample['data']:
-            temp = {'name': _content['attributes']['name'], 'unique_id': _content['attributes']['unique_id']}
+            temp = {'name': _content['attributes']['name'],
+                    'unique_id': _content['attributes']['unique_id']}
             if not _content['attributes']['link'] == "null":
                 temp['link'] = _content['attributes']['link']
             else:
@@ -23,7 +25,7 @@ def extract_content(sample):
             content.append(temp)
 
     except:
-        #Cannot get curriculums
+        # Cannot get curriculums
         errorLogger.error('Cannot get curriculums')
         content = False
     return content
@@ -41,14 +43,15 @@ def embed_content(embed, content):
             value = '[{0}]({0})'.format(content[i]['link'])
 
         if content[i]['name']:
-            name='`' + content[i]['unique_id'].capitalize() + '`  ' + content[i]['name'].capitalize()
+            name = '`' + content[i]['unique_id'].capitalize() + \
+                '`  ' + content[i]['name'].capitalize()
         else:
-            name='`' + content[i]['unique_id'].capitalize() + '`'
+            name = '`' + content[i]['unique_id'].capitalize() + '`'
 
         embed.add_field(
             # name='`' + content[i]['unique_id'] +
             # '`' +content[i]['name'].capitalize(),
-            name = name,
+            name=name,
             value=value,
             inline=False,
         )
@@ -84,7 +87,7 @@ async def fetch_content(unique_id, ch):
     url = '/api/v1/contents?filter[parent_id]=' + unique_id
 
     embed = discord.Embed(
-        title= unique_id + ' Questions 💻',
+        title=unique_id + ' Questions 💻',
         description='Let us solve some questions now. Here is a list of questions for you to solve. Reach out to these questions using below link. \n \n Once you start solving the question you can mark the status as done, undone or doubt using command dn-mark-[status] [Question no.]. \n \n For example if you want to mark Q1 as done enter command dn-mark-done Q1. \n Happy Learning 😀',
     )
 
@@ -103,7 +106,7 @@ async def fetch_content(unique_id, ch):
 
     resp = response.json()
 
-    if len(resp["data"])==0:
+    if len(resp["data"]) == 0:
         asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
         errorLogger.error('The topic does not exist in the database')
         return False
@@ -129,7 +132,7 @@ async def fetch(message):
 
     embed = discord.Embed(
         title='Topics 💻',
-       description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. \n \n For example: If you wish to solve a question of array, type dn-fetch Arrays \n \n',
+        description='Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. \n \n For example: If you wish to solve a question of array, type dn-fetch Arrays \n \n',
     )
 
     payload = {}
@@ -137,7 +140,7 @@ async def fetch(message):
     try:
         response = await send_request(method_type="GET", url='/api/v1/contents?filter[parent_id]=algo', data=payload)
         infoLogger.info('topics fetched')
-    except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError) as e:
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error('Error while getting the fetch response', exc_info=e)
         response = None
 
@@ -146,10 +149,9 @@ async def fetch(message):
         errorLogger.error('The request failed with an empty response')
         return False
 
-
     resp = response.json()
 
-    if len(resp["data"])==0:
+    if len(resp["data"]) == 0:
         asyncio.ensure_future(data_not_found(ch, "No topics present !"))
         errorLogger.error('Fetch request failed with an empty data')
         return False
@@ -170,10 +172,10 @@ async def fetch(message):
 async def send_done_in_channel(user, unique_id):
     ch = client.get_channel(int(os.getenv('STATUS_CHANNEL')))
 
-    url = '/api/v1/contents?filter[unique_id]=' + unique_id  
-    res = await send_request(method_type="GET", url= url)
-    res=res.json()
-    
+    url = '/api/v1/contents?filter[unique_id]=' + unique_id
+    res = await send_request(method_type="GET", url=url)
+    res = res.json()
+
     # Error in sending data to channel
     # if len(res["data"])==0:
 
@@ -208,15 +210,18 @@ async def send_done_in_channel(user, unique_id):
 async def mark_ques_status(user, command, status):
     ch = command.channel
     try:
-        unique_id=command.content.split(' ')[1]
+        unique_id = command.content.split(' ')[1]
         infoLogger.info('Question unique id is received')
     except IndexError as e:
-        errorLogger.error('No unique_id is received from the command', exc_info=e)
-        asyncio.ensure_future(data_not_found(ch, "No question id is mentioned, Please enter correct one!"))
+        errorLogger.error(
+            'No unique_id is received from the command', exc_info=e)
+        asyncio.ensure_future(data_not_found(
+            ch, "No question id is mentioned, Please enter correct one!"))
         return
     res = await update_submissions(user, unique_id, status)
     if not res:
-        asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
+        asyncio.ensure_future(data_not_found(
+            ch, "Invalid question id, Please enter correct one!"))
         return res
     res = res.json()
 
@@ -232,7 +237,8 @@ async def mark_ques_status(user, command, status):
     )
 
     if not res["data"]["id"]:
-        asyncio.ensure_future(data_not_found(ch, "Invalid question id, Please enter correct one!"))
+        asyncio.ensure_future(data_not_found(
+            ch, "Invalid question id, Please enter correct one!"))
         errorLogger.error('Invalid question id')
 
     else:
@@ -272,13 +278,13 @@ async def update_submissions(user, unique_id, status):
 
 def embed_leaderboard(embed, leaderboard):
     embed.clear_fields()
-
+    
     for i in range(len(leaderboard)):
 
         name = leaderboard[i]['name'].capitalize()
         score = leaderboard[i]['score']
-        if score==None:
-            score='zero'
+        if score == None:
+            score = 'zero'
 
         embed.add_field(
             name=name,
@@ -289,45 +295,108 @@ def embed_leaderboard(embed, leaderboard):
     return embed
 
 
-async def get_leaderboard(message):
+async def add_leadeboard_reaction(message, reactions):
+    await message.clear_reactions()
+    for reaction in reactions:
+        asyncio.ensure_future(message.add_reaction(reaction))
 
-    url = 'api/v1/users/leaderboard'
+
+async def get_leaderboard_embed(url, message, page=1):
+    reactions = ['🔼', '🔽']
+
     try:
-        res = await send_request(method_type="GET", url=url)
+        res = await send_request(method_type="GET", url=url+'?page='+str(page))
         infoLogger.info('leaderboard is successfully retrieved')
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error('Error while getting the leaderboard', exc_info=e)
         res = None
 
     if not res:
-        asyncio.ensure_future(data_not_found(message.channel, "Insufficient data to create leaderboard !"))
+        asyncio.ensure_future(data_not_found(
+            message.channel, "Insufficient data to create leaderboard !"))
         return False
 
     res = res.json()
+    
+    #** from res
+    global total_leaderboard_pages
+    total_pages = res['count']
+    total_leaderboard_pages=total_pages
+    
 
-    embed = discord.Embed(title='Leaderboard',description='Here are the top performers. Keep going👍')
-    embed = embed_leaderboard(embed, res)
-    
-    leaderboard_png='https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif'
+    embed = discord.Embed(
+        title='Leaderboard', description='Here are the top performers. Keep going👍')
+    embed = embed_leaderboard(embed, res['scoreboard'])
+
+    leaderboard_png = 'https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif'
     embed.set_thumbnail(url=leaderboard_png)
+
+    embed.set_footer(text='Page : '+str(page)+'/'+str(total_pages))
+
+    return embed
+
+
+async def get_leaderboard(message,page):
+    reactions = ['🔼', '🔽']
+    url = 'api/v1/users/leaderboard'
+
+    embed = await get_leaderboard_embed(url, message, page)
+    message_sent = await message.channel.send(embed=embed)
+
+    await add_leadeboard_reaction(message_sent, reactions)
+
+    return message_sent.id
+
+
+async def on_leaderboard_reaction(payload): 
+    from event import current_leaderboard_page_number
+    page = current_leaderboard_page_number
     
-    asyncio.ensure_future(message.channel.send(embed=embed))
-    return True
+    reactions = ['🔼', '🔽']
+    if payload.member.bot == False and reactions.__contains__(payload.emoji.name):
+        url = 'api/v1/users/leaderboard'
+
+        if payload.emoji.name == "🔽":
+            page = page + 1
+
+        if payload.emoji.name == "🔼":
+            page = page - 1
+
+        if page <= 0:
+            page = 1
+        
+        if page > total_leaderboard_pages:
+            page = total_leaderboard_pages
+
+        from event import update_current_leaderboard_page_number
+        update_current_leaderboard_page_number(page)
+        
+
+        channel = await client.fetch_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+
+        embed = await get_leaderboard_embed(url, message, page)
+        
+        await add_leadeboard_reaction(message, reactions)
+
+        await message.edit(embed=embed)
+
 
 async def wrong_channel_prompt(desc):
-  return discord.Embed(
+    return discord.Embed(
         title='Oooooops! Seems like a Wrong channel :(',
-        description= desc,
+        description=desc,
     ).set_thumbnail(
-            url = 'https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif'
-        )
+        url='https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif'
+    )
 
 
 async def check_channel_ask_a_bot(message):
-  ch = message.channel
-  if ch.id != int(os.environ['ASK_A_BOT']) and type(ch).__name__ != 'DMChannel':
-    prompt = asyncio.ensure_future(wrong_channel_prompt("Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "))
-    asyncio.ensure_future(ch.send(embed= prompt))
-    return False
-  else:
-    return True
+    ch = message.channel
+    if ch.id != int(os.environ['ASK_A_BOT']) and type(ch).__name__ != 'DMChannel':
+        prompt = asyncio.ensure_future(wrong_channel_prompt(
+            "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "))
+        asyncio.ensure_future(ch.send(embed=prompt))
+        return False
+    else:
+        return True
