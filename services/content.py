@@ -394,8 +394,8 @@ async def wrong_channel_prompt(desc):
 async def check_channel_ask_a_bot(message):
     ch = message.channel
     if ch.id != int(os.environ['ASK_A_BOT']) and type(ch).__name__ != 'DMChannel':
-        prompt = asyncio.ensure_future(wrong_channel_prompt(
-            "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "))
+        prompt = wrong_channel_prompt(
+            "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! ")
         asyncio.ensure_future(ch.send(embed=prompt))
         return False
     else:
