@@ -21,7 +21,7 @@ load_dotenv()
 async def on_ready():
     print('Logged in as', client.user.name, client.user.id)
     print('------')
-    # await listExistingMembers()
+    await listExistingMembers()
 
 
 @client.event
@@ -65,6 +65,4 @@ async def on_raw_reaction_add(payload):
 # called_once_a_week_mmt.start()
 
 #BOT
-print("Discord bot started successfully")
-print("New Image")
 client.run(os.getenv('BOT_TOKEN'))
