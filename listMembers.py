@@ -8,12 +8,12 @@ from utils import send_request
 
 async def listExistingMembers():
     res = await getAllMembers()
-    li =list()
+    d = {}
     for i in res['data']:
-        li.append(int(i['attributes']['discord_id']))
+        d[int(i['attributes']['discord_id'])] = 1
     for member in client.get_all_members():
         if not member.bot:
-            if member.id not in li:
+            if member.id not in d:
                 infoLogger.info(
                     'database call to create ' + str(member.name) + ' with id ' + str(member.id) + ' is sent.')
                 await submit_user_details(member)
