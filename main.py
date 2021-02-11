@@ -8,6 +8,7 @@ from client import client
 from event import on_user_message
 from listMembers import listExistingMembers
 from logger import errorLogger, infoLogger
+from services.content import on_leaderboard_reaction
 from services.gbu import called_once_a_week_gbu
 from services.group import (
     called_once_a_week_gm_assign,
@@ -25,7 +26,7 @@ load_dotenv()
 async def on_ready():
     print("Logged in as", client.user.name, client.user.id)
     print("------")
-    await listExistingMembers()
+    # await listExistingMembers()
 
 
 @client.event
@@ -56,6 +57,12 @@ async def on_raw_reaction_add(payload):
         if is_active:
             await gm.on_reaction(payload)
 
+    if payload.channel_id == int(os.getenv("ASK_A_BOT")):
+        from event import last_leaderboard_message_id
+
+        if payload.message_id == last_leaderboard_message_id:
+            await on_leaderboard_reaction(payload)
+
 
 # CRONs
 # called_once_a_week_gbu.start()
@@ -64,6 +71,4 @@ async def on_raw_reaction_add(payload):
 # called_once_a_week_mmt.start()
 
 # BOT
-print("Discord bot started successfully")
-print("New Image")
 client.run(os.getenv("BOT_TOKEN"))

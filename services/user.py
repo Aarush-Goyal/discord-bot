@@ -13,6 +13,9 @@ from utils import get_seconds_till_weekday, send_request
 load_dotenv()
 
 # Send greeting msg to new user and post user details in DB
+GREETING_CHANNEL = os.getenv("GREETING_CHANNEL")
+
+
 def get_user_joined_prompt():
     return discord.Embed(title="Devsnest Community").set_thumbnail(
         url="https://miro.medium.com/max/1600/0*C-cPP9D2MIyeexAT.gif"
@@ -35,7 +38,7 @@ async def new_member_joined(member, GREETING_CHANNEL):
     asyncio.ensure_future(ch.send(embed=user_prompt))
 
     user_email = "temp@gmail.com"  # temporarily
-    resp = await submit_user_details(user_email, member)
+    resp = await submit_user_details(member, user_email)
     return resp
 
 
@@ -80,7 +83,7 @@ async def submit_user_details(member, user_email=None):
     myobj = {
         "data": {
             "attributes": {
-                "email": str(member.id) + "@gmail.com",
+                "email": str(member.id) + "gmail.com",
                 "name": member.display_name,
                 "discord_id": str(member.id),
                 "username": member.name,

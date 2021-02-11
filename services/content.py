@@ -10,6 +10,7 @@ from logger import errorLogger, infoLogger
 from utils import data_not_found, send_request, take_input_dm
 
 load_dotenv()
+total_leaderboard_pages = 100
 
 
 def extract_content(sample):
@@ -308,18 +309,24 @@ def embed_leaderboard(embed, leaderboard):
 
         embed.add_field(
             name=name,
-            value="has solved {0} questions this week.".format(score),
+            value="has solved {0} questions.".format(score),
             inline=False,
         )
 
     return embed
 
 
-async def get_leaderboard(message):
+async def add_leadeboard_reaction(message, reactions):
+    await message.clear_reactions()
+    for reaction in reactions:
+        asyncio.ensure_future(message.add_reaction(reaction))
 
-    url = "api/v1/users/leaderboard"
+
+async def get_leaderboard_embed(url, message, page=1):
+    reactions = ["🔼", "🔽"]
+
     try:
-        res = await send_request(method_type="GET", url=url)
+        res = await send_request(method_type="GET", url=url + "?page=" + str(page))
         infoLogger.info("leaderboard is successfully retrieved")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error("Error while getting the leaderboard", exc_info=e)
@@ -333,21 +340,74 @@ async def get_leaderboard(message):
 
     res = res.json()
 
+    # ** from res
+    global total_leaderboard_pages
+    total_pages = res["count"]
+    total_leaderboard_pages = total_pages
+
     embed = discord.Embed(
         title="Leaderboard", description="Here are the top performers. Keep going👍"
     )
-    embed = embed_leaderboard(embed, res)
+    embed = embed_leaderboard(embed, res["scoreboard"])
 
     leaderboard_png = (
         "https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif"
     )
     embed.set_thumbnail(url=leaderboard_png)
 
-    asyncio.ensure_future(message.channel.send(embed=embed))
-    return True
+    embed.set_footer(text="Page : " + str(page) + "/" + str(total_pages))
+
+    return embed
 
 
-async def wrong_channel_prompt(desc):
+async def get_leaderboard(message, page):
+    reactions = ["🔼", "🔽"]
+    url = "api/v1/users/leaderboard"
+
+    embed = await get_leaderboard_embed(url, message, page)
+    message_sent = await message.channel.send(embed=embed)
+
+    await add_leadeboard_reaction(message_sent, reactions)
+
+    return message_sent.id
+
+
+async def on_leaderboard_reaction(payload):
+    from event import current_leaderboard_page_number
+
+    page = current_leaderboard_page_number
+
+    reactions = ["🔼", "🔽"]
+    if payload.member.bot == False and reactions.__contains__(payload.emoji.name):
+        url = "api/v1/users/leaderboard"
+
+        if payload.emoji.name == "🔽":
+            page = page + 1
+
+        if payload.emoji.name == "🔼":
+            page = page - 1
+
+        if page <= 0:
+            page = 1
+
+        if page > total_leaderboard_pages:
+            page = total_leaderboard_pages
+
+        from event import update_current_leaderboard_page_number
+
+        update_current_leaderboard_page_number(page)
+
+        channel = await client.fetch_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+
+        embed = await get_leaderboard_embed(url, message, page)
+
+        await add_leadeboard_reaction(message, reactions)
+
+        await message.edit(embed=embed)
+
+
+def wrong_channel_prompt(desc):
     return discord.Embed(
         title="Oooooops! Seems like a Wrong channel :(",
         description=desc,
@@ -359,10 +419,8 @@ async def wrong_channel_prompt(desc):
 async def check_channel_ask_a_bot(message):
     ch = message.channel
     if ch.id != int(os.environ["ASK_A_BOT"]) and type(ch).__name__ != "DMChannel":
-        prompt = asyncio.ensure_future(
-            wrong_channel_prompt(
-                "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "
-            )
+        prompt = wrong_channel_prompt(
+            "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "
         )
         asyncio.ensure_future(ch.send(embed=prompt))
         return False

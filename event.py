@@ -18,6 +18,15 @@ from utils import data_not_found, not_recognized
 
 load_dotenv()
 
+# no oops ;-;
+last_leaderboard_message_id = None
+current_leaderboard_page_number = 1
+
+
+def update_current_leaderboard_page_number(page):
+    global current_leaderboard_page_number
+    current_leaderboard_page_number = page
+
 
 def get_prompt_help():
     return discord.Embed(
@@ -76,4 +85,14 @@ async def on_user_message(message):
 
     if message.content.startswith("dn-leaderboard"):
         if await check_channel_ask_a_bot(message):
-            asyncio.ensure_future(get_leaderboard(message))
+            global current_leaderboard_page_number
+            global last_leaderboard_message_id
+
+            try:
+                current_leaderboard_page_number = int(message.content.split(" ")[1])
+            except:
+                current_leaderboard_page_number = 1
+
+            last_leaderboard_message_id = await get_leaderboard(
+                message, current_leaderboard_page_number
+            )
