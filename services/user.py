@@ -79,14 +79,16 @@ async def get_user_email_and_id(user):
 async def submit_user_details(member, user_email=None):
 
     url = "/api/v1/users"
-    print(url)
+    name = re.sub("[^\-a-zA-Z0-9 @#$&._-]", "_", member.name)
+    display_name = re.sub("[^\-a-zA-Z0-9. @#$&_-]", "_", member.display_name)
+
     myobj = {
         "data": {
             "attributes": {
                 "email": str(member.id) + "gmail.com",
-                "name": member.display_name,
+                "name": display_name,
                 "discord_id": str(member.id),
-                "username": member.name,
+                "username": name,
                 "password": "1234",
                 "buddy": 0,
             },
