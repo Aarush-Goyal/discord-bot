@@ -1,6 +1,5 @@
 FROM python:3.8-alpine3.13
 
-RUN mkdir /home/app
 WORKDIR /home/app
 
 RUN apk update && apk upgrade && \
