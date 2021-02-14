@@ -10,21 +10,25 @@ import requests
 import asyncio
 load_dotenv()
 
-#no oops ;-;
-last_leaderboard_message_id=None
-current_leaderboard_page_number=1
+# no oops ;-;
+last_leaderboard_message_id = None
+current_leaderboard_page_number = 1
+
+doubt_tags = ["doubt", "problem", "doubts", "question"]
+
 
 def update_current_leaderboard_page_number(page):
     global current_leaderboard_page_number
-    current_leaderboard_page_number=page
+    current_leaderboard_page_number = page
+
 
 def get_prompt_help():
     return discord.Embed(
-          title='DN Bot Guide', description= "DN Bot is especially designed for the users of Devsnest Community."
-          + "DN bot is always there to help and make your learning fun. Use the below commands for smooth experience on the platform \n"
-        ).set_thumbnail(
-            url = 'https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png'
-        )
+        title='DN Bot Guide', description="DN Bot is especially designed for the users of Devsnest Community."
+        + "DN bot is always there to help and make your learning fun. Use the below commands for smooth experience on the platform \n"
+    ).set_thumbnail(
+        url='https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png'
+    )
 
 
 async def on_user_message(message):
@@ -49,7 +53,8 @@ async def on_user_message(message):
     if message.content.startswith('dn-email'):
         user_email = await get_user_email_and_id(message.author)
         if user_email:
-            asyncio.ensure_future(submit_user_details(message.author,user_email))
+            asyncio.ensure_future(
+                submit_user_details(message.author, user_email))
 
     if message.content.startswith('dn-fetch'):
         if await check_channel_ask_a_bot(message):
@@ -59,11 +64,9 @@ async def on_user_message(message):
         if await check_channel_ask_a_bot(message):
             asyncio.ensure_future(mark_ques_status(message.author, message, 0))
 
-
     if message.content.startswith('dn-mark-undone'):
         if await check_channel_ask_a_bot(message):
             asyncio.ensure_future(mark_ques_status(message.author, message, 1))
-
 
     if message.content.startswith('dn-mark-doubt'):
         if await check_channel_ask_a_bot(message):
@@ -81,11 +84,16 @@ async def on_user_message(message):
         if await check_channel_ask_a_bot(message):
             global current_leaderboard_page_number
             global last_leaderboard_message_id
-            
+
             try:
-                current_leaderboard_page_number = int(message.content.split(' ')[1])
+                current_leaderboard_page_number = int(
+                    message.content.split(' ')[1])
             except:
                 current_leaderboard_page_number = 1
 
-            last_leaderboard_message_id=await get_leaderboard(message,current_leaderboard_page_number)
+            last_leaderboard_message_id = await get_leaderboard(message, current_leaderboard_page_number)
 
+    for doubt_tag in doubt_tags:
+        if doubt_tag in message.content.lower():
+            await message.author.send(
+                "If you wanted to ask a doubt you can use the command ``` dn-mark-doubt Q<id> ``` to mark it as a doubt :innocent:")
