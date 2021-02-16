@@ -1,11 +1,11 @@
 # Devsnest Discord Bot
 ![Python Versions](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-orange)
 
-This repository is a basic roadmap to use bot in a efficient way for everyone.
+This repository is a basic roadmap to setup bot in your local system in a efficient way for everyone.
 
 ## Support!!
 
-If you need some help for something, do not hesitate to join our discord community [here](https://discord.gg/ZUAJYjqD).
+If you need some help for something, do join our discord community [here](https://discord.gg/ZUAJYjqD).
 
 Wanna reach us directly, You can reach us [here](https://devsnest.in/).
 
