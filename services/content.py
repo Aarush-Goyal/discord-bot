@@ -6,6 +6,7 @@ import requests
 from dotenv import load_dotenv
 
 from client import client
+from event import update_current_leaderboard_page_number
 from logger import errorLogger, infoLogger
 from utils import data_not_found, send_request, take_input_dm
 
@@ -27,7 +28,7 @@ def extract_content(sample):
                 temp["link"] = None
             content.append(temp)
 
-    except:
+    except Exception:
         # Cannot get curriculums
         errorLogger.error("Cannot get curriculums")
         content = False
@@ -38,27 +39,16 @@ def embed_content(embed, content):
     embed.clear_fields()
 
     for i in range(len(content)):
-
-        value = (
-            "Use command "
-            + "`"
-            + "dn-fetch "
-            + content[i]["unique_id"].capitalize()
-            + "`"
-        )
+        unique_id = content[i]["unique_id"].capitalize()
+        value = "Use command " "`" "`dn-fetch " f"{unique_id}" "`"
 
         if content[i]["link"]:
             value = "[{0}]({0})".format(content[i]["link"])
 
         if content[i]["name"]:
-            name = (
-                "`"
-                + content[i]["unique_id"].capitalize()
-                + "`  "
-                + content[i]["name"].capitalize()
-            )
+            name = f"`{unique_id}`" f"{content[i]['name'].capitalize()}"
         else:
-            name = "`" + content[i]["unique_id"].capitalize() + "`"
+            name = f"`{unique_id}`"
 
         embed.add_field(
             # name='`' + content[i]['unique_id'] +
@@ -100,7 +90,17 @@ async def fetch_content(unique_id, ch):
 
     embed = discord.Embed(
         title=unique_id + " Questions 💻",
-        description="Let us solve some questions now. Here is a list of questions for you to solve. Reach out to these questions using below link. \n \n Once you start solving the question you can mark the status as done, undone or doubt using command dn-mark-[status] [Question no.]. \n \n For example if you want to mark Q1 as done enter command dn-mark-done Q1. \n Happy Learning 😀",
+        description=(
+            "Let us solve some questions now. "
+            "Here is a list of questions for you to solve. "
+            "Reach out to these questions using below link. \n\n"
+            "Once you start solving the question you can mark the status "
+            "as done, undone or doubt using command "
+            "dn-mark-[status] [Question no.]. \n\n"
+            "For example if you want to mark Q1 "
+            "as done enter command dn-mark-done Q1. \n"
+            "Happy Learning 😀",
+        ),
     )
 
     payload = {}
@@ -144,7 +144,13 @@ async def fetch(message):
 
     embed = discord.Embed(
         title="Topics 💻",
-        description="Welcome to the world of learning! Here is the list of questions for you to practice. Choose the resource by typing out the name. \n \n For example: If you wish to solve a question of array, type dn-fetch Arrays \n \n",
+        description=(
+            "Welcome to the world of learning! "
+            "Here is the list of questions for you to practice. "
+            "Choose the resource by typing out the name.\n\n"
+            "For example: If you wish to solve a question of array, "
+            "type dn-fetch Arrays \n\n"
+        ),
     )
 
     payload = {}
@@ -161,8 +167,8 @@ async def fetch(message):
         response = None
 
     if not response:
-        asyncio.ensure_future(data_not_found(ch, "No topics present !"))
-        errorLogger.error("The request failed with an empty response")
+        asyncio.ensure_future(data_not_found(ch, "No topics present!"))
+        errorLogger.error("The request failed with an empty response.")
         return False
 
     resp = response.json()
@@ -199,7 +205,7 @@ async def send_done_in_channel(user, unique_id):
         question_name = res["data"][0]["attributes"]["name"]
         question_link = res["data"][0]["attributes"]["link"]
         infoLogger.info("update-submissions: data successfully parsed")
-    except:
+    except Exception:
         errorLogger.error("Error while parsing data")
         return False
 
@@ -217,7 +223,8 @@ async def send_done_in_channel(user, unique_id):
     #     "Question Unique ID : "+'`'+unique_id+'`'), inline=False)
 
     confetti_png = str(
-        "https://media1.tenor.com/images/ed2bcee37ffb2944ecafec3e852d6014/tenor.gif?itemid=10369910"
+        "https://media1.tenor.com/images/"
+        "ed2bcee37ffb2944ecafec3e852d6014/tenor.gif?itemid=10369910"
     )
 
     embed.set_thumbnail(url=confetti_png)
@@ -246,11 +253,22 @@ async def mark_ques_status(user, command, status):
     res = res.json()
 
     if status == 0:
-        desc = "Congratulations‼ \n This question has been marked as done. Keep Going 😄"
+        desc = (
+            "Congratulations‼ \n" "This question has been marked as done. Keep Going 😄"
+        )
     elif status == 1:
-        desc = "Hey, This question has been marked as undone. Try solving it. All the best‼ 😎"
+        desc = (
+            "Hey, This question has been marked as undone."
+            "Try solving it. All the best‼ 😎"
+        )
     elif status == 2:
-        desc = "Seems like, you're Stuck‼ 😶 \n This question has been marked as doubt. \n Try solving, Incase you are not able to solve, feel free to contact your mentor. Let this not hinder your learning 👍 "
+        desc = (
+            "Seems like, you're Stuck‼ 😶\n"
+            "This question has been marked as doubt."
+            "Try solving, in case you are not able to solve,"
+            "feel free to contact your mentor. "
+            "Let this not hinder your learning 👍"
+        )
     embed = discord.Embed(
         title="Question status marked successfully 👍 ",
         description=desc,
@@ -304,7 +322,7 @@ def embed_leaderboard(embed, leaderboard):
 
         name = leaderboard[i]["name"].capitalize()
         score = leaderboard[i]["score"]
-        if score == None:
+        if score is None:
             score = "zero"
 
         embed.add_field(
@@ -323,11 +341,10 @@ async def add_leadeboard_reaction(message, reactions):
 
 
 async def get_leaderboard_embed(url, message, page=1):
-    reactions = ["🔼", "🔽"]
 
     try:
-        res = await send_request(method_type="GET", url=url + "?page=" + str(page))
-        infoLogger.info("leaderboard is successfully retrieved")
+        res = await send_request(method_type="GET", url=f"{url}?page={str(page)}")
+        infoLogger.info("Leaderboard is successfully retrieved.")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error("Error while getting the leaderboard", exc_info=e)
         res = None
@@ -351,11 +368,11 @@ async def get_leaderboard_embed(url, message, page=1):
     embed = embed_leaderboard(embed, res["scoreboard"])
 
     leaderboard_png = (
-        "https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif"
+        "https://thumbs.gfycat.com/" "EthicalPerfumedAsiaticwildass-size_restricted.gif"
     )
     embed.set_thumbnail(url=leaderboard_png)
 
-    embed.set_footer(text="Page : " + str(page) + "/" + str(total_pages))
+    embed.set_footer(text=f"Page : {str(page)}/{str(total_pages)}")
 
     return embed
 
@@ -378,22 +395,20 @@ async def on_leaderboard_reaction(payload):
     page = current_leaderboard_page_number
 
     reactions = ["🔼", "🔽"]
-    if payload.member.bot == False and reactions.__contains__(payload.emoji.name):
+    if payload.member.bot is False and reactions.__contains__(payload.emoji.name):
         url = "api/v1/users/leaderboard"
 
         if payload.emoji.name == "🔽":
-            page = page + 1
+            page += 1
 
         if payload.emoji.name == "🔼":
-            page = page - 1
+            page -= 1
 
         if page <= 0:
             page = 1
 
         if page > total_leaderboard_pages:
             page = total_leaderboard_pages
-
-        from event import update_current_leaderboard_page_number
 
         update_current_leaderboard_page_number(page)
 
@@ -412,7 +427,10 @@ def wrong_channel_prompt(desc):
         title="Oooooops! Seems like a Wrong channel :(",
         description=desc,
     ).set_thumbnail(
-        url="https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif"
+        url=(
+            "https://media.tenor.com/images/"
+            "2b454269146fcddfdae60d3013484f0f/tenor.gif"
+        )
     )
 
 
@@ -420,9 +438,9 @@ async def check_channel_ask_a_bot(message):
     ch = message.channel
     if ch.id != int(os.environ["ASK_A_BOT"]) and type(ch).__name__ != "DMChannel":
         prompt = wrong_channel_prompt(
-            "Type this command in 'Ask-a-Bot channel' or DM the bot to get the desired result !! "
+            "Type this command in 'Ask-a-Bot channel' or "
+            "DM the bot to get the desired result !! "
         )
         asyncio.ensure_future(ch.send(embed=prompt))
         return False
-    else:
-        return True
+    return True

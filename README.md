@@ -18,13 +18,13 @@ Want to reach us directly, You can reach us [here](https://devsnest.in/).
 $ git clone https://github.com/devs-nest/discord-bot.git
 ```
 * Create a virtual environment 
-```
-$ virtualenv venv
+```shell script
+$ virtualenv venv -p python3
 $ source venv/bin/activate
 ```
 
 * Install packages
-``` 
+```shell script
 $ pip install -r requirements.txt  or pip3 install -r requirements.txt
 ```
 
@@ -81,20 +81,20 @@ How can you contribute?
    $ pre-commit install
    ```
 5. Create a new branch
-```shell script
-$ git checkout -b feature/<your-feature-name>
-```
+   ```shell script
+   $ git checkout -b feature/<your-feature-name>
+   ```
 6. Commit your changes and push it on github
-```shell script
-$ git commit -am "<what changes you have made" && git push origin feature/<your-feature-name>
-```
+   ```shell script
+   $ git commit -am "<what changes you have made" && git push origin feature/<your-feature-name>
+   ```
 7. Create a PR, and get it reviewed, that's it.
 
 ### Fixing lint errors.
 Run
-```shell script
- $ black . && isort .
-```
+   ```shell script
+    $ black . && isort .
+   ```
 
 ### Note 
 Main is our holy grail, never push anything to main

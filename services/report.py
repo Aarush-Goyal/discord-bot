@@ -1,14 +1,11 @@
 import asyncio
-import os
-import re
 
 import discord
 import requests
 from dotenv import load_dotenv
 
-from client import client
 from logger import errorLogger
-from utils import data_not_found, get_seconds_till_weekday, send_request
+from utils import data_not_found, send_request
 
 load_dotenv()
 
@@ -21,7 +18,7 @@ async def calc_days(message):
             (msg[1])
             if days < 1:
                 raise Exception("Invalid no of days")
-        except:
+        except Exception:
             asyncio.ensure_future(
                 data_not_found(message.channel, "Please enter valid no. of day count")
             )
@@ -32,12 +29,7 @@ async def calc_days(message):
 
 
 async def get_report_from_db(message, days):
-    url = (
-        "/api/v1/users/report?discord_id="
-        + str(message.author.id)
-        + "&days="
-        + str(days)
-    )
+    url = f"/api/v1/users/report?discord_id={str(message.author.id)}&days={str(days)}"
     try:
         resp = await send_request(method_type="GET", url=url)
         resp = resp.json()
@@ -49,9 +41,9 @@ async def get_report_from_db(message, days):
 
 
 def get_prompt_report(days):
-    return discord.Embed(
-        title="YOUR REPORT FOR LAST " + str(days) + " DAYS"
-    ).set_thumbnail(url="https://media4.giphy.com/media/3orieMyfgezWc93UOc/200.gif")
+    return discord.Embed(title=f"YOUR REPORT FOR LAST {str(days)} DAYS").set_thumbnail(
+        url="https://media4.giphy.com/media/3orieMyfgezWc93UOc/200.gif"
+    )
 
 
 async def show_user_report(resp, message, days):
@@ -68,7 +60,7 @@ async def show_user_report(resp, message, days):
     )
 
     prompt.add_field(
-        name="Total number of questions:", value=str(resp["total_ques"]), inline=False
+        name=f"Total number of questions: {str(resp['total_ques'])}", inline=False
     )
 
     resp.pop("total_ques")
@@ -77,7 +69,7 @@ async def show_user_report(resp, message, days):
 
     if len(resp) > 0:
         for topic, cnt in resp.items():
-            report += "\n" + "`" + topic.capitalize() + "`" + "  :  " + str(cnt)
+            report += f"\n`{topic.capitalize()}`:  {str(cnt)}"
 
         prompt.add_field(name="Question solved per topic: ", value=report, inline=False)
 

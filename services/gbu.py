@@ -13,14 +13,20 @@ from utils import get_seconds_till_weekday, send_request
 
 def show_GBN_prompt(name):
     return discord.Embed(title=name + "'s GBN for the week").set_thumbnail(
-        url="https://www.pngfind.com/pngs/m/326-3261800_person-thinking-png-thinking-icon-transparent-png.png"
+        url=(
+            "https://www.pngfind.com/pngs/m/"
+            "326-3261800_person-thinking-png-thinking-icon-transparent-png.png"
+        )
     )
 
 
 def describe_gbn_prompt():
     return discord.Embed(
         title="Hey, it's Introspection Time!",
-        description="Every week we try to analyze what went good or bad during week and also what is our future plan for the next week.",
+        description=(
+            "Every week we try to analyze what went good or bad during wee "
+            "and also what is our future plan for the next week."
+        ),
     )
 
 
@@ -93,7 +99,7 @@ async def called_once_a_week_gbu():
     tasks = [
         asyncio.create_task(get_user_gbu(message_channel, member))
         for member in message_channel.members
-        if member.bot == False
+        if member.bot is False
     ]
     await asyncio.wait(tasks)
 

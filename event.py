@@ -1,8 +1,6 @@
 import asyncio
-import os
 
 import discord
-import requests
 from dotenv import load_dotenv
 
 from services.content import (
@@ -14,7 +12,6 @@ from services.content import (
 from services.mmt import assign_mentors_to_all
 from services.report import calc_days, get_report_from_db, show_user_report
 from services.user import get_user_email_and_id, submit_user_details
-from utils import data_not_found, not_recognized
 
 load_dotenv()
 
@@ -31,8 +28,11 @@ def update_current_leaderboard_page_number(page):
 def get_prompt_help():
     return discord.Embed(
         title="DN Bot Guide",
-        description="DN Bot is especially designed for the users of Devsnest Community."
-        + "DN bot is always there to help and make your learning fun. Use the below commands for smooth experience on the platform \n",
+        description=(
+            "DN Bot is especially designed for the users of Devsnest Community."
+            "DN bot is always there to help and make your learning fun. "
+            "Use the below commands for smooth experience on the platform \n",
+        ),
     ).set_thumbnail(url="https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png")
 
 
@@ -45,7 +45,15 @@ async def on_user_message(message):
         asyncio.ensure_future(message.channel.send(msg))
 
     if message.content.startswith("dn-help"):
-        msg = "dn-help: To get command help \n \n dn-fetch: To get list of questions \n \n dn-mark-done: To mark question done \n \n dn-mark-undone: To mark question undone \n \n dn-mark-doubt: To get mark question as doubt \n \n dn-report: To get progress report \n \n dn-leaderboard: To get list of top 10 students of week \n "
+        msg = (
+            "dn-help: To get command help \n \n dn-fetch: "
+            "To get list of questions \n \n"
+            "dn-mark-done: To mark question done \n \n"
+            "dn-mark-undone: To mark question undone \n \n"
+            "dn-mark-doubt: To get mark question as doubt \n \n"
+            "dn-report: To get progress report \n \n"
+            "dn-leaderboard: To get list of top 10 students of week \n "
+        )
 
         prompt = get_prompt_help()
         prompt.add_field(
@@ -90,7 +98,7 @@ async def on_user_message(message):
 
             try:
                 current_leaderboard_page_number = int(message.content.split(" ")[1])
-            except:
+            except Exception:
                 current_leaderboard_page_number = 1
 
             last_leaderboard_message_id = await get_leaderboard(

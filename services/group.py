@@ -26,7 +26,13 @@ class GroupMeet:
         self.accepted_username_list = []
         self.rejected_username_list = []
         self.reactions = ["👍", "👎"]
-        self.description = "Get ready to be the part of weekly group meet. This is a plattform where you can interact with your peers and get to know them better. Feel free to discuss about your aspirations and goal and start networking"
+        self.description = (
+            "Get ready to be the part of weekly group meet. "
+            "This is a platform where you can interact with "
+            "your peers and get to know them better. "
+            "Feel free to discuss about your aspirations "
+            "and goal and start networking."
+        )
         self.prompt = self._get_basic_prompt()
         self._add_reaction_fields()
 
@@ -34,7 +40,10 @@ class GroupMeet:
         return discord.Embed(
             title="Group Meet ", description=self.description
         ).set_thumbnail(
-            url="https://media.tenor.com/images/5155ecadbe64a1c5c13d363ed22ce84d/tenor.gif"
+            url=(
+                "https://media.tenor.com/images/"
+                "5155ecadbe64a1c5c13d363ed22ce84d/tenor.gif"
+            )
         )
 
     def _add_reaction_fields(self):
@@ -62,7 +71,7 @@ class GroupMeet:
         if (
             is_active
             and payload.message_id == self.reaction_message.id
-            and payload.member.bot == False
+            and payload.member.bot is False
         ):
             if payload.emoji.name == "👍":
                 asyncio.ensure_future(self.add_users_to_db(payload.user_id, 1))
@@ -72,7 +81,7 @@ class GroupMeet:
                 try:
                     self.rejected_user_list.remove(payload.user_id)
                     self.rejected_username_list.remove(payload.member.name)
-                except:
+                except Exception:
                     pass
 
             elif payload.emoji.name == "👎":
@@ -83,7 +92,7 @@ class GroupMeet:
                 try:
                     self.accepted_user_list.remove(payload.user_id)
                     self.accepted_username_list.remove(payload.member.name)
-                except:
+                except Exception:
                     pass
 
             self.prompt = self._get_basic_prompt()
@@ -152,28 +161,36 @@ class GroupMeet:
             for user in data:
                 groups[idx].append(int(user["discord_id"]))
 
-        getMentionStr = lambda x: f"<@{str(x)}>"
-        getAssignedGroupPromptDescription = (
-            lambda grp: f"**Group Lead**: {getMentionStr(grp[0])}\n"
-            + "**Members**: "
-            + " ".join(list(map(getMentionStr, grp)))
-        )
-
         prompt = discord.Embed(
             title="Group Meet Assigned Groups",
-            description="Pls, find your respected groups for this week's Group Meeting. \n \n The group meeting is scheduled at 9 pm tonight. Group leaders are required to moderate it.",
+            description=(
+                "Please find your respective groups for "
+                "this week's Group Meeting. \n\n"
+                "The group meeting is scheduled at 9 pm tonight. "
+                "Group leaders are required to moderate it.",
+            ),
         ).set_thumbnail(
             url="https://media1.giphy.com/media/VEhMiI26CCXVK6mixx/giphy.gif"
         )
         for idx, grp in enumerate(groups.values()):
+            grp_name = str(idx + 1).zfill(2)
             prompt.add_field(
-                name=f"-------------------'Group-{str(idx + 1).zfill(2)}'-------------------\n \n",
-                value=getAssignedGroupPromptDescription(grp),
+                name=f"-------------------'Group-{grp_name}'-------------------\n\n",
+                value=self._getAssignedGroupPromptDescription(grp),
                 inline=False,
             )
 
         asyncio.ensure_future(
             self.client.get_channel(int(self.channel_id)).send(embed=prompt)
+        )
+
+    def _getMentionStr(self, member):
+        return f"<@{str(member)}>"
+
+    def _getAssignedGroupPromptDescription(self, grp):
+        return (
+            f"**Group Lead**: {self._getMentionStr(grp[0])}\n"
+            f"**Members**: {' '.join(self._getMentionStr(mem) for mem in grp)}"
         )
 
 

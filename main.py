@@ -6,17 +6,9 @@ from dotenv import load_dotenv
 
 from client import client
 from event import on_user_message
-from listMembers import listExistingMembers
 from logger import errorLogger, infoLogger
 from services.content import on_leaderboard_reaction
-from services.gbu import called_once_a_week_gbu
-from services.group import (
-    called_once_a_week_gm_assign,
-    called_once_a_week_gm_poll,
-    gm,
-    is_active,
-)
-from services.mmt import assign_mentor_to_new_user, called_once_a_week_mmt
+from services.mmt import assign_mentor_to_new_user
 from services.user import new_member_joined
 
 load_dotenv()
