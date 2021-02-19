@@ -6,7 +6,6 @@ import requests
 from dotenv import load_dotenv
 
 from client import client
-from event import update_current_leaderboard_page_number
 from logger import errorLogger, infoLogger
 from utils import data_not_found, send_request, take_input_dm
 
@@ -98,7 +97,7 @@ async def fetch_content(unique_id, ch):
             "`dn-mark-[status] [Question no.]`.\n\n"
             "For example, if you want to mark Q1 "
             "as done enter command `dn-mark-done Q1`. \n"
-            "Happy Learning!😀",
+            "Happy Learning!😀"
         ),
     )
 
@@ -385,7 +384,10 @@ async def get_leaderboard(message, page):
 
 
 async def on_leaderboard_reaction(payload):
-    from event import current_leaderboard_page_number
+    from event import (
+        current_leaderboard_page_number,
+        update_current_leaderboard_page_number,
+    )
 
     page = current_leaderboard_page_number
 

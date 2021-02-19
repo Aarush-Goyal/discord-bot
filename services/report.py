@@ -60,7 +60,7 @@ async def show_user_report(resp, message, days):
     )
 
     prompt.add_field(
-        name=f"Total number of questions: {str(resp['total_ques'])}", inline=False
+        name="Total number of questions:", value=str(resp["total_ques"]), inline=False
     )
 
     resp.pop("total_ques")

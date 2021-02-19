@@ -31,7 +31,7 @@ def get_prompt_help():
         description=(
             "DN Bot is especially designed for the users of Devsnest Community. "
             "DN bot is always there to help and make your learning fun. "
-            "Use the following commands for a smooth experience on the platform:\n",
+            "Use the following commands for a smooth experience on the platform:\n"
         ),
     ).set_thumbnail(url="https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png")
 
