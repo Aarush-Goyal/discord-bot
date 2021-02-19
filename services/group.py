@@ -98,7 +98,7 @@ class GroupMeet:
             self.prompt = self._get_basic_prompt()
             self.prompt.add_field(
                 name="To accept the invite react with 👍",
-                value="Accepted User List\n" + "\n".join(self.accepted_username_list),
+                value="Accepted User List:\n" + "\n".join(self.accepted_username_list),
                 inline=False,
             )
             self.prompt.add_field(
@@ -119,23 +119,23 @@ class GroupMeet:
             await send_request(
                 method_type="POST", url="api/v1/groupcalls/", data=payload
             )
-            infoLogger.info("User response for the groupcall has been recorded")
+            infoLogger.info("User response for the group call has been recorded.")
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.HTTPError,
         ) as e:
-            errorLogger.error("Error while recording user response for groupcall", e)
+            errorLogger.error("Error while recording user response for group call.", e)
 
     async def post_groups_to_channel(self):
 
         try:
             groups_list = await send_request(method_type="GET", url="api/v1/groupcalls")
-            infoLogger.info("Groups received from database")
+            infoLogger.info("Groups received from database.")
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.HTTPError,
         ) as e:
-            errorLogger.error("Error while getting the groups", e)
+            errorLogger.error("Error while getting the groups.", e)
             groups_list = None
 
         if groups_list is None:
@@ -148,7 +148,7 @@ class GroupMeet:
             asyncio.ensure_future(
                 data_not_found(
                     self.client.get_channel(int(self.channel_id)),
-                    "No one accepted the group invite this week !",
+                    "No one accepted the group invite this week!",
                 )
             )
             return

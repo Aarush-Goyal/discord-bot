@@ -29,9 +29,9 @@ def get_prompt_help():
     return discord.Embed(
         title="DN Bot Guide",
         description=(
-            "DN Bot is especially designed for the users of Devsnest Community."
+            "DN Bot is especially designed for the users of Devsnest Community. "
             "DN bot is always there to help and make your learning fun. "
-            "Use the below commands for smooth experience on the platform \n",
+            "Use the following commands for a smooth experience on the platform:\n",
         ),
     ).set_thumbnail(url="https://cdn.wayscript.com/blog_img/83/DiscordBotThumb.png")
 
@@ -41,18 +41,18 @@ async def on_user_message(message):
         asyncio.ensure_future(assign_mentors_to_all())
 
     if message.content.startswith("dn-hello"):
-        msg = "hello {0.author.mention}".format(message)
+        msg = f"Hello {message.author.mention}!"
         asyncio.ensure_future(message.channel.send(msg))
 
     if message.content.startswith("dn-help"):
         msg = (
-            "dn-help: To get command help \n \n dn-fetch: "
-            "To get list of questions \n \n"
-            "dn-mark-done: To mark question done \n \n"
-            "dn-mark-undone: To mark question undone \n \n"
-            "dn-mark-doubt: To get mark question as doubt \n \n"
-            "dn-report: To get progress report \n \n"
-            "dn-leaderboard: To get list of top 10 students of week \n "
+            "dn-help: To get command help.\n\n"
+            " dn-fetch: To get list of questions.\n\n"
+            "dn-mark-done: To mark a question as done.\n\n"
+            "dn-mark-undone: To mark a question as undone.\n\n"
+            "dn-mark-doubt: To mark a question as doubt.\n\n"
+            "dn-report: To get progress report.\n\n"
+            "dn-leaderboard: To get list of top 10 students of week.\n"
         )
 
         prompt = get_prompt_help()

@@ -30,7 +30,7 @@ def extract_content(sample):
 
     except Exception:
         # Cannot get curriculums
-        errorLogger.error("Cannot get curriculums")
+        errorLogger.error("Cannot get curricula.")
         content = False
     return content
 
@@ -40,13 +40,13 @@ def embed_content(embed, content):
 
     for i in range(len(content)):
         unique_id = content[i]["unique_id"].capitalize()
-        value = "Use command " "`" "`dn-fetch " f"{unique_id}" "`"
+        value = f"Use command: `dn-fetch {unique_id}`"
 
         if content[i]["link"]:
             value = "[{0}]({0})".format(content[i]["link"])
 
         if content[i]["name"]:
-            name = f"`{unique_id}`" f"{content[i]['name'].capitalize()}"
+            name = f"`{unique_id}` {content[i]['name'].capitalize()}"
         else:
             name = f"`{unique_id}`"
 
@@ -81,7 +81,6 @@ async def prompt_and_check(user, embed, content, input=True):
 
     else:
         return True
-
     return user_input
 
 
@@ -93,40 +92,40 @@ async def fetch_content(unique_id, ch):
         description=(
             "Let us solve some questions now. "
             "Here is a list of questions for you to solve. "
-            "Reach out to these questions using below link. \n\n"
-            "Once you start solving the question you can mark the status "
-            "as done, undone or doubt using command "
-            "dn-mark-[status] [Question no.]. \n\n"
-            "For example if you want to mark Q1 "
-            "as done enter command dn-mark-done Q1. \n"
-            "Happy Learning 😀",
+            "Reach these questions using the following link.\n\n"
+            "Once you start solving a question you can mark its status "
+            "as done, undone or doubt using the command "
+            "`dn-mark-[status] [Question no.]`.\n\n"
+            "For example, if you want to mark Q1 "
+            "as done enter command `dn-mark-done Q1`. \n"
+            "Happy Learning!😀",
         ),
     )
 
     payload = {}
     try:
         response = await send_request(method_type="GET", url=url, data=payload)
-        infoLogger.info("Fetch request is successful")
+        infoLogger.info("Fetch request is successful.")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error("Error while getting response", exc_info=e)
         response = None
 
     if not response:
         asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
-        errorLogger.error("Content not found")
+        errorLogger.error("Content not found.")
         return False
 
     resp = response.json()
 
     if len(resp["data"]) == 0:
         asyncio.ensure_future(data_not_found(ch, "Invalid topic name!"))
-        errorLogger.error("The topic does not exist in the database")
+        errorLogger.error("The topic does not exist in the database.")
         return False
     else:
         content = extract_content(resp)
 
         if not content:
-            errorLogger.error("invalid content")
+            errorLogger.error("Invalid content.")
             return False
 
         embed = embed_content(embed, content)
@@ -147,9 +146,9 @@ async def fetch(message):
         description=(
             "Welcome to the world of learning! "
             "Here is the list of questions for you to practice. "
-            "Choose the resource by typing out the name.\n\n"
-            "For example: If you wish to solve a question of array, "
-            "type dn-fetch Arrays \n\n"
+            "Choose the resource by typing out its name.\n\n"
+            "For example: If you wish to solve a question on array, "
+            "type `dn-fetch Arrays`\n\n"
         ),
     )
 
@@ -161,9 +160,9 @@ async def fetch(message):
             url="/api/v1/contents?filter[parent_id]=algo",
             data=payload,
         )
-        infoLogger.info("topics fetched")
+        infoLogger.info("Topics fetched.")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error("Error while getting the fetch response", exc_info=e)
+        errorLogger.error("Error while getting the fetch response.", exc_info=e)
         response = None
 
     if not response:
@@ -175,18 +174,18 @@ async def fetch(message):
 
     if len(resp["data"]) == 0:
         asyncio.ensure_future(data_not_found(ch, "No topics present !"))
-        errorLogger.error("Fetch request failed with an empty data")
+        errorLogger.error("Fetch request failed with empty data.")
         return False
 
     curriculums = extract_content(resp)
     if not curriculums:
         asyncio.ensure_future(data_not_found(ch, "No topics present !"))
-        errorLogger.error("No topics found while parsing curriculum")
+        errorLogger.error("No topics found while parsing curriculum.")
         return False
 
     embed = embed_content(embed, curriculums)
     asyncio.ensure_future(ch.send(embed=embed))
-    infoLogger.info("Fetch Data: Embed sent to the channel")
+    infoLogger.info("Fetch Data: Embed sent to the channel.")
 
     return True
 
@@ -194,7 +193,7 @@ async def fetch(message):
 async def send_done_in_channel(user, unique_id):
     ch = client.get_channel(int(os.getenv("STATUS_CHANNEL")))
 
-    url = "/api/v1/contents?filter[unique_id]=" + unique_id
+    url = f"/api/v1/contents?filter[unique_id]={unique_id}"
     res = await send_request(method_type="GET", url=url)
     res = res.json()
 
@@ -211,12 +210,12 @@ async def send_done_in_channel(user, unique_id):
 
     embed = discord.Embed(
         title="Status Update",
-        description="{0} has solved Question `{1}`".format(user.mention, question_name),
+        description=f"{user.mention} has solved Question `{question_name}`.",
     )
 
     embed.add_field(
-        name="You can too give it a shot now!",
-        value="Try it [here]({0})".format(question_link),
+        name="You too can give it a shot now!",
+        value=f"Try it [here]({question_link})",
         inline=False,
     )
     # embed.add_field(name="Unique ID", value=(
@@ -230,16 +229,16 @@ async def send_done_in_channel(user, unique_id):
     embed.set_thumbnail(url=confetti_png)
 
     asyncio.ensure_future(ch.send(embed=embed))
-    infoLogger.info("Question Status: Embed sent to the channel")
+    infoLogger.info("Question Status: Embed sent to the channel.")
 
 
 async def mark_ques_status(user, command, status):
     ch = command.channel
     try:
         unique_id = command.content.split(" ")[1]
-        infoLogger.info("Question unique id is received")
+        infoLogger.info("Question unique id is received.")
     except IndexError as e:
-        errorLogger.error("No unique_id is received from the command", exc_info=e)
+        errorLogger.error("No unique_id is received from the command.", exc_info=e)
         asyncio.ensure_future(
             data_not_found(ch, "No question id is mentioned, Please enter correct one!")
         )
@@ -253,9 +252,7 @@ async def mark_ques_status(user, command, status):
     res = res.json()
 
     if status == 0:
-        desc = (
-            "Congratulations‼ \n" "This question has been marked as done. Keep Going 😄"
-        )
+        desc = "Congratulations‼ \nThis question has been marked as done. Keep Going 😄"
     elif status == 1:
         desc = (
             "Hey, This question has been marked as undone."
@@ -263,22 +260,21 @@ async def mark_ques_status(user, command, status):
         )
     elif status == 2:
         desc = (
-            "Seems like, you're Stuck‼ 😶\n"
-            "This question has been marked as doubt."
-            "Try solving, in case you are not able to solve,"
-            "feel free to contact your mentor. "
-            "Let this not hinder your learning 👍"
+            "Seems like, you're Stuck‼ 😶\nThis question has been marked as doubt. "
+            "Give it a try, in case you are not able to solve, "
+            "feel free to contact your mentor. Let this not hinder your learning 👍"
         )
     embed = discord.Embed(
         title="Question status marked successfully 👍 ",
-        description=desc,
+        description=desc,  # This statement can fail with variable used befire
+        # assignment as there is no else block in the above else-if statements.
     )
 
     if not res["data"]["id"]:
         asyncio.ensure_future(
             data_not_found(ch, "Invalid question id, Please enter correct one!")
         )
-        errorLogger.error("Invalid question id")
+        errorLogger.error("Invalid question id.")
 
     else:
         content = extract_content(res)
@@ -307,7 +303,7 @@ async def update_submissions(user, unique_id, status):
     }
     try:
         response = await send_request(method_type="POST", url=url, data=payload)
-        infoLogger.info("send_request: submissions updated successfully")
+        infoLogger.info("send_request: submissions updated successfully.")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
         errorLogger.error("Error while submitting the response", exc_info=e)
         response = None
@@ -319,7 +315,6 @@ def embed_leaderboard(embed, leaderboard):
     embed.clear_fields()
 
     for i in range(len(leaderboard)):
-
         name = leaderboard[i]["name"].capitalize()
         score = leaderboard[i]["score"]
         if score is None:
@@ -327,7 +322,7 @@ def embed_leaderboard(embed, leaderboard):
 
         embed.add_field(
             name=name,
-            value="has solved {0} questions.".format(score),
+            value=f"has solved {score} questions.",
             inline=False,
         )
 
@@ -346,12 +341,12 @@ async def get_leaderboard_embed(url, message, page=1):
         res = await send_request(method_type="GET", url=f"{url}?page={str(page)}")
         infoLogger.info("Leaderboard is successfully retrieved.")
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger.error("Error while getting the leaderboard", exc_info=e)
+        errorLogger.error("Error while getting the leaderboard.", exc_info=e)
         res = None
 
     if not res:
         asyncio.ensure_future(
-            data_not_found(message.channel, "Insufficient data to create leaderboard !")
+            data_not_found(message.channel, "Insufficient data to create leaderboard!")
         )
         return False
 
@@ -363,12 +358,12 @@ async def get_leaderboard_embed(url, message, page=1):
     total_leaderboard_pages = total_pages
 
     embed = discord.Embed(
-        title="Leaderboard", description="Here are the top performers. Keep going👍"
+        title="Leaderboard", description="Here are the top performers. Keep going 👍"
     )
     embed = embed_leaderboard(embed, res["scoreboard"])
 
     leaderboard_png = (
-        "https://thumbs.gfycat.com/" "EthicalPerfumedAsiaticwildass-size_restricted.gif"
+        "https://thumbs.gfycat.com/EthicalPerfumedAsiaticwildass-size_restricted.gif"
     )
     embed.set_thumbnail(url=leaderboard_png)
 
@@ -428,8 +423,7 @@ def wrong_channel_prompt(desc):
         description=desc,
     ).set_thumbnail(
         url=(
-            "https://media.tenor.com/images/"
-            "2b454269146fcddfdae60d3013484f0f/tenor.gif"
+            "https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif"
         )
     )
 

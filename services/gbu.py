@@ -12,7 +12,7 @@ from utils import get_seconds_till_weekday, send_request
 
 
 def show_GBN_prompt(name):
-    return discord.Embed(title=name + "'s GBN for the week").set_thumbnail(
+    return discord.Embed(title=f"{name}'s GBN for the week").set_thumbnail(
         url=(
             "https://www.pngfind.com/pngs/m/"
             "326-3261800_person-thinking-png-thinking-icon-transparent-png.png"
@@ -24,7 +24,7 @@ def describe_gbn_prompt():
     return discord.Embed(
         title="Hey, it's Introspection Time!",
         description=(
-            "Every week we try to analyze what went good or bad during wee "
+            "Every week we try to analyze what went good or bad during week "
             "and also what is our future plan for the next week."
         ),
     )
@@ -40,7 +40,7 @@ async def get_from_user(member, msg):
 
         res = await client.wait_for("message", check=check, timeout=518400000)
         if res:
-            await member.send("You filled: {0}".format(res.content))
+            await member.send(f"You filled: {res.content}")
     except asyncio.TimeoutError:
         await member.send("Sorry, your time limit to fill gbn has been extended.")
         res = False
@@ -51,9 +51,9 @@ async def get_user_gbu(message_channel, member):
     tell_about_gbn_prompt = describe_gbn_prompt()
     await member.send(embed=tell_about_gbn_prompt)
 
-    good = await get_from_user(member, "So what happened good in previous week")
-    bad = await get_from_user(member, "What happened bad in last week")
-    plan = await get_from_user(member, "What is your plan for next week")
+    good = await get_from_user(member, "So what happened good in previous week?")
+    bad = await get_from_user(member, "What happened bad in last week?")
+    plan = await get_from_user(member, "What is your plan for next week?")
 
     if good and bad and plan:
         gbn_prompt = show_GBN_prompt(member.name)
@@ -65,10 +65,7 @@ async def get_user_gbu(message_channel, member):
 
         await message_channel.send(embed=gbn_prompt)
 
-        desc = (
-            "Good: " + good.content + " Bad: " + bad.content + " Ugly: " + plan.content
-        )
-
+        desc = f"Good: {good.content} Bad: {bad.content} Ugly: {plan.content}"
         payload = {
             "data": {
                 "attributes": {
@@ -81,7 +78,7 @@ async def get_user_gbu(message_channel, member):
         }
         try:
             await send_request(method_type="POST", url="api/v1/writeups/", data=payload)
-            infoLogger.info("User writeup is successfully sent to the database")
+            infoLogger.info("User writeup is successfully sent to the database.")
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.HTTPError,

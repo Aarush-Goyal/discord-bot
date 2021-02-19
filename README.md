@@ -7,7 +7,7 @@ This repository is a basic roadmap to setup bot in your local system in a effici
 
 If you need some help for something, do join our discord community [here](https://discord.gg/ZUAJYjqD).
 
-Want to reach us directly, You can reach us [here](https://devsnest.in/).
+Want to reach us directly? You can reach us [here](https://devsnest.in/).
 
 ---------------------------------------------------------------------------------------------
 

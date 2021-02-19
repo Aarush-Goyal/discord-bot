@@ -15,11 +15,8 @@ async def listExistingMembers():
         if not member.bot:
             if member.id not in d:
                 infoLogger.info(
-                    "database call to create "
-                    + str(member.name)
-                    + " with id "
-                    + str(member.id)
-                    + " is sent."
+                    f"database call to create {str(member.name)} "
+                    f"with id {str(member.id)} is sent."
                 )
                 await submit_user_details(member)
 
@@ -29,6 +26,6 @@ async def getAllMembers():
     try:
         res = await send_request("GET", url)
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
-        errorLogger("error in fetching users from db" + str(e))
+        errorLogger(f"Error in fetching users from db {str(e)}")
     res = res.json()
     return res
