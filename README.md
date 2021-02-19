@@ -7,40 +7,40 @@ This repository is a basic roadmap to setup bot in your local system in a effici
 
 If you need some help for something, do join our discord community [here](https://discord.gg/ZUAJYjqD).
 
-Wanna reach us directly, You can reach us [here](https://devsnest.in/).
+Want to reach us directly? You can reach us [here](https://devsnest.in/).
 
 ---------------------------------------------------------------------------------------------
 
 ## How to get started!!
 
-* Clone Repository
-```shell script
-$ git clone https://github.com/devs-nest/discord-bot.git
-```
-* Create a virtual environment 
-```
-$ virtualenv venv
-$ source venv/bin/activate
-```
+1. Clone Repository
+    ```shell script
+    $ git clone https://github.com/devs-nest/discord-bot.git
+    ```
+2. Create a virtual environment
+    ```shell script
+    $ virtualenv venv -p python3
+    $ source venv/bin/activate
+    ```
 
-* Install packages
-``` 
-$ pip install -r requirements.txt  or pip3 install -r requirements.txt
-```
+3. Install packages
+    ```shell script
+    $ pip install -r requirements.txt  or pip3 install -r requirements.txt
+    ```
 
-* Add values in .env 
-```
-refer to sample.env
-```
-* Run server
-```shell script
-$ python main.py or python3 main.py
-```
+4. Add values in .env
+    ```
+    refer to sample.env
+    ```
+5. Run server
+    ```shell script
+    $ python main.py or python3 main.py
+    ```
 ---------------------------------------------------------------------------------------------
 
 ## Discord basics
 
-Brief overview of some basic things>>>
+Brief overview of some basic things...
 
 | Variable          | What it is                                                            |
 | ------------------| ----------------------------------------------------------------------|
@@ -65,21 +65,43 @@ Brief overview of some basic things>>>
 ---------------------------------------------------------------------------------------------
 
 How can you contribute?
-1. Create a new branch
-```shell script
-$ git checkout -b feature/<your-feature-name>
-```
 
-2. Commit your changes and push it on github
-```shell script
-$ git commit -am "<what changes you have made" && git push origin feature/<your-feature-name>
-```
+1. Clone the repo.
+2. Create a virtualenv and activate it.
+   ```shell script
+   $ virtualenv -p python3 venv
+   $ venv/bin/activate
+   ```
+3. Install dependencies.
+   ```shell script
+   $ pip install -r requirements-dev.txt
+   ```
+4. Run
+   ```shell script
+   $ pre-commit install
+   ```
+5. Create a new branch
+   ```shell script
+   $ git checkout -b feature/<your-feature-name>
+   ```
+6. Commit your changes and push it on github
+   ```shell script
+   $ git commit -am "<what changes you have made>" && git push origin feature/<your-feature-name>
+   ```
+7. Create a PR, and get it reviewed, that's it.
 
-3. Create a PR, and get it reviewed, that's it.
+### Fixing lint errors.
+1. Run the following command, it will autofix the errors in the files.
+   ```shell script
+    $ black . && isort .
+   ```
+2. Run the following command and fix the errors.
+    ```shell script
+    $ flake8 .
+   ```
 
-
-### Note 
-Master is our holy grail, never push anything to master
+### Note:
+Main is our holy grail, never push anything directly to main.
 
 ## Authors
-* **[Devsnest](https://github.com/devs-nest)** - The community of some gems>>>
+* **[Devsnest](https://github.com/devs-nest)** - The community of some gems.
