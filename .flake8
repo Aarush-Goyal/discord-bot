@@ -1,0 +1,6 @@
+[flake8]
+select = B,C,D,E,F,I,L,N,Q,W
+ignore = C812,C813,C814,C815,C816,C901,B306,N814,W504,W503,
+max-line-length = 88
+max-complexity = 10
+exclude = .git,__pycache__,venv
