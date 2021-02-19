@@ -86,7 +86,7 @@ How can you contribute?
    ```
 6. Commit your changes and push it on github
    ```shell script
-   $ git commit -am "<what changes you have made" && git push origin feature/<your-feature-name>
+   $ git commit -am "<what changes you have made>" && git push origin feature/<your-feature-name>
    ```
 7. Create a PR, and get it reviewed, that's it.
 
