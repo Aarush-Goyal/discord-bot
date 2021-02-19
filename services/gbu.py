@@ -32,9 +32,7 @@ def describe_gbn_prompt():
 
 async def get_from_user(member, msg):
     prompt = discord.Embed(title=msg)
-
     await member.send(embed=prompt)
-
     try:
 
         def check(message):
@@ -43,7 +41,6 @@ async def get_from_user(member, msg):
         res = await client.wait_for("message", check=check, timeout=518400000)
         if res:
             await member.send("You filled: {0}".format(res.content))
-
     except asyncio.TimeoutError:
         await member.send("Sorry, your time limit to fill gbn has been extended.")
         res = False

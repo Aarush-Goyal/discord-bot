@@ -13,34 +13,34 @@ Want to reach us directly, You can reach us [here](https://devsnest.in/).
 
 ## How to get started!!
 
-* Clone Repository
-```shell script
-$ git clone https://github.com/devs-nest/discord-bot.git
-```
-* Create a virtual environment 
-```shell script
-$ virtualenv venv -p python3
-$ source venv/bin/activate
-```
+1. Clone Repository
+    ```shell script
+    $ git clone https://github.com/devs-nest/discord-bot.git
+    ```
+2. Create a virtual environment
+    ```shell script
+    $ virtualenv venv -p python3
+    $ source venv/bin/activate
+    ```
 
-* Install packages
-```shell script
-$ pip install -r requirements.txt  or pip3 install -r requirements.txt
-```
+3. Install packages
+    ```shell script
+    $ pip install -r requirements.txt  or pip3 install -r requirements.txt
+    ```
 
-* Add values in .env 
-```
-refer to sample.env
-```
-* Run server
-```shell script
-$ python main.py or python3 main.py
-```
+4. Add values in .env
+    ```
+    refer to sample.env
+    ```
+5. Run server
+    ```shell script
+    $ python main.py or python3 main.py
+    ```
 ---------------------------------------------------------------------------------------------
 
 ## Discord basics
 
-Brief overview of some basic things>>>
+Brief overview of some basic things...
 
 | Variable          | What it is                                                            |
 | ------------------| ----------------------------------------------------------------------|
@@ -72,7 +72,7 @@ How can you contribute?
    $ virtualenv -p python3 venv
    $ venv/bin/activate
    ```
-3. Install dependencies:
+3. Install dependencies.
    ```shell script
    $ pip install -r requirements-dev.txt
    ```
@@ -91,13 +91,17 @@ How can you contribute?
 7. Create a PR, and get it reviewed, that's it.
 
 ### Fixing lint errors.
-Run
+1. Run the following command, it will autofix the errors in the files.
    ```shell script
     $ black . && isort .
    ```
+2. Run the following command and fix the errors.
+    ```shell script
+    $ flake8 .
+   ```
 
-### Note 
-Main is our holy grail, never push anything to main
+### Note:
+Main is our holy grail, never push anything directly to main.
 
 ## Authors
-* **[Devsnest](https://github.com/devs-nest)** - The community of some gems>>>
+* **[Devsnest](https://github.com/devs-nest)** - The community of some gems.
