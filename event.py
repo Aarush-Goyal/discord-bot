@@ -47,7 +47,7 @@ async def on_user_message(message):
     if message.content.startswith("dn-help"):
         msg = (
             "dn-help: To get command help.\n\n"
-            " dn-fetch: To get list of questions.\n\n"
+            "dn-fetch: To get list of questions.\n\n"
             "dn-mark-done: To mark a question as done.\n\n"
             "dn-mark-undone: To mark a question as undone.\n\n"
             "dn-mark-doubt: To mark a question as doubt.\n\n"
